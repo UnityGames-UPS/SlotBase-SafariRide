@@ -298,6 +298,13 @@ public class SlotView : MonoBehaviour
     #endregion
 
     #region Symbol Display
+    private readonly List<int> regularSymbolIds = new List<int> { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13 };
+
+    private int GetRandomRegularSymbolId()
+    {
+        int randomIndex = Random.Range(0, regularSymbolIds.Count);
+        return regularSymbolIds[randomIndex];
+    }
 
     private void SetReelSymbols(int columnIndex, List<int> visibleSymbolIds, bool isInitial = false)
     {
@@ -334,14 +341,15 @@ public class SlotView : MonoBehaviour
             }
         }
 
+        
         for (int i = 0; i < visibleStartIndex; i++)
         {
-            reel.images[i].sprite = GetSymbolSprite(Random.Range(0, 10));
+            reel.images[i].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
         }
 
         for (int i = visibleStartIndex + rowCount; i < reel.images.Count; i++)
         {
-            reel.images[i].sprite = GetSymbolSprite(Random.Range(0, 10));
+            reel.images[i].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
         }
 
         if (isInitial && reelTransforms[columnIndex] != null)
@@ -499,7 +507,7 @@ public class SlotView : MonoBehaviour
             reel.images[i].sprite = reel.images[i - 1].sprite;
         }
 
-        reel.images[0].sprite = GetSymbolSprite(Random.Range(0, 10));
+        reel.images[0].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
     }
 
     #endregion
