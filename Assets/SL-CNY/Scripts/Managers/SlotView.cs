@@ -216,18 +216,30 @@ public class SlotView : MonoBehaviour
     private void BuildSymbolSpriteArray()
     {
         // Build the symbol sprite array from named sprite fields
-        symbolSprites = new Sprite[13];
+        symbolSprites = new Sprite[18];
+
         symbolSprites[0] = spriteTiger;
-        symbolSprites[1] = spriteOwl;
-        symbolSprites[2] = spriteCat;
-        symbolSprites[3] = spriteFrog;
-        symbolSprites[4] = spriteDeer;
-        symbolSprites[5] = spriteFox;
-        symbolSprites[6] = spriteRedGem;
-        symbolSprites[7] = spriteOrangeGem;
-        symbolSprites[8] = spritePinkGem;
-        symbolSprites[9] = spriteGreenGem;
-        symbolSprites[10] = spriteRedStrawberry;
+        symbolSprites[1] = spriteGoldCoin;
+        symbolSprites[2] = spriteOwl;
+        symbolSprites[3] = spriteCat;
+        symbolSprites[4] = spriteFrog;
+        symbolSprites[5] = spriteDeer;
+        symbolSprites[6] = spriteFox;
+        symbolSprites[7] = spriteRedGem;
+        symbolSprites[8] = spriteOrangeGem;
+        symbolSprites[9] = spritePinkGem;
+        symbolSprites[10] = spriteGreenGem;
+        symbolSprites[11] = spriteRedStrawberry;
+        symbolSprites[12] = spriteGoldStrawberry;
+        symbolSprites[13] = spriteBlueberry;
+        symbolSprites[14] = spriteGoldBerries;
+
+        // These backend IDs reuse existing artwork.
+        // There are no separate Wild Yin Yang / Wild Strawberry sprites.
+        symbolSprites[15] = spriteBlueberry;
+        symbolSprites[16] = spriteBlueberry;
+        symbolSprites[17] = spriteRedStrawberry;
+
 
         // Validate
         for (int i = 0; i < symbolSprites.Length; i++)
@@ -239,9 +251,9 @@ public class SlotView : MonoBehaviour
         }
 
         // Build the animation sprite arrays
-        animationSpriteArrays = new List<Sprite>[13];
-        // Only USpin has an animation in this game
-        animationSpriteArrays[11] = animSpritesUSpin;
+        animationSpriteArrays = new List<Sprite>[18];
+        // Only USpin has an animation in this game - SFR has different animations.
+        //animationSpriteArrays[11] = animSpritesUSpin;
     }
 
     private void InitializeReels()
