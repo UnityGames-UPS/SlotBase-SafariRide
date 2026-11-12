@@ -1,0 +1,442 @@
+fileFormatVersion: 2
+guid: 3a84f139ee2d47040ba1e46301a08c22
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 104056364272193229
+    second: flowers_fall_Animation67_0
+  - first:
+      213: 3094774015126848123
+    second: flowers_fall_Animation67_1
+  - first:
+      213: -7117933929000574429
+    second: flowers_fall_Animation67_2
+  - first:
+      213: 181050551708678136
+    second: flowers_fall_Animation67_3
+  - first:
+      213: 5989128823044094638
+    second: flowers_fall_Animation67_4
+  - first:
+      213: -7876735327281645749
+    second: flowers_fall_Animation67_5
+  - first:
+      213: -2087330036770070380
+    second: flowers_fall_Animation67_6
+  - first:
+      213: 677718950393838720
+    second: flowers_fall_Animation67_7
+  - first:
+      213: -1748419187846104657
+    second: flowers_fall_Animation67_8
+  - first:
+      213: -1089984163654307592
+    second: flowers_fall_Animation67_9
+  - first:
+      213: -496310815311886728
+    second: flowers_fall_Animation67_10
+  - first:
+      213: -3325462183696803715
+    second: flowers_fall_Animation67_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_0
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 682
+        width: 35
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dce001546bea17100800000000000000
+      internalID: 104056364272193229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_1
+      rect:
+        serializedVersion: 2
+        x: 1288
+        y: 599
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b72ceb7e198d2fa20800000000000000
+      internalID: 3094774015126848123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_2
+      rect:
+        serializedVersion: 2
+        x: 1596
+        y: 548
+        width: 38
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3226833ddc4083d90800000000000000
+      internalID: -7117933929000574429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_3
+      rect:
+        serializedVersion: 2
+        x: 1426
+        y: 369
+        width: 38
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f7fbfc7488338200800000000000000
+      internalID: 181050551708678136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_4
+      rect:
+        serializedVersion: 2
+        x: 1813
+        y: 392
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaab89bcee8ad1350800000000000000
+      internalID: 5989128823044094638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_5
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 321
+        width: 40
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b477b9bd3f630b290800000000000000
+      internalID: -7876735327281645749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_6
+      rect:
+        serializedVersion: 2
+        x: 1074
+        y: 344
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 490215504605803e0800000000000000
+      internalID: -2087330036770070380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_7
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 240
+        width: 39
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08c76cf6bcdb76900800000000000000
+      internalID: 677718950393838720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_8
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 167
+        width: 41
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa9b4fd130e5cb7e0800000000000000
+      internalID: -1748419187846104657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_9
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 146
+        width: 50
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f0759a9d299fd0f0800000000000000
+      internalID: -1089984163654307592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_10
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 35
+        width: 42
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 876862b61ffbc19f0800000000000000
+      internalID: -496310815311886728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flowers_fall_Animation67_11
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 40
+        width: 33
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d78d1c253c599d1d0800000000000000
+      internalID: -3325462183696803715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      flowers_fall_Animation67_0: 104056364272193229
+      flowers_fall_Animation67_1: 3094774015126848123
+      flowers_fall_Animation67_10: -496310815311886728
+      flowers_fall_Animation67_11: -3325462183696803715
+      flowers_fall_Animation67_2: -7117933929000574429
+      flowers_fall_Animation67_3: 181050551708678136
+      flowers_fall_Animation67_4: 5989128823044094638
+      flowers_fall_Animation67_5: -7876735327281645749
+      flowers_fall_Animation67_6: -2087330036770070380
+      flowers_fall_Animation67_7: 677718950393838720
+      flowers_fall_Animation67_8: -1748419187846104657
+      flowers_fall_Animation67_9: -1089984163654307592
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

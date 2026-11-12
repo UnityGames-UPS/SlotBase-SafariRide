@@ -1,0 +1,442 @@
+fileFormatVersion: 2
+guid: 66de5c96d8fc0724982b6f3fcf0d8e3c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6624833408270280308
+    second: Single_Slot_Animaton63_0
+  - first:
+      213: 8566812548932294448
+    second: Single_Slot_Animaton63_1
+  - first:
+      213: -4671973148069847356
+    second: Single_Slot_Animaton63_2
+  - first:
+      213: 4590387213222657123
+    second: Single_Slot_Animaton63_3
+  - first:
+      213: -5068819274896426560
+    second: Single_Slot_Animaton63_4
+  - first:
+      213: 4584376231286581663
+    second: Single_Slot_Animaton63_5
+  - first:
+      213: 456485275884242822
+    second: Single_Slot_Animaton63_6
+  - first:
+      213: 177333972968279347
+    second: Single_Slot_Animaton63_7
+  - first:
+      213: -8747334898791448981
+    second: Single_Slot_Animaton63_8
+  - first:
+      213: -8402469795829909209
+    second: Single_Slot_Animaton63_9
+  - first:
+      213: 6054758409352327702
+    second: Single_Slot_Animaton63_10
+  - first:
+      213: -6224574906689313914
+    second: Single_Slot_Animaton63_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_0
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 728
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c89d8e37d1ddf04a0800000000000000
+      internalID: -6624833408270280308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_1
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 735
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 037d774df9e63e670800000000000000
+      internalID: 8566812548932294448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_2
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 695
+        width: 201
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ce122dcc21d92fb0800000000000000
+      internalID: -4671973148069847356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_3
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 684
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36cb1a979d454bf30800000000000000
+      internalID: 4590387213222657123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_4
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 608
+        width: 29
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c93529a9bfe7a9b0800000000000000
+      internalID: -5068819274896426560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_5
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 447
+        width: 19
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f99a49ea4e9fe9f30800000000000000
+      internalID: 4584376231286581663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_6
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 312
+        width: 19
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 687c64a90f2c55600800000000000000
+      internalID: 456485275884242822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_7
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 164
+        width: 29
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33d02611f44067200800000000000000
+      internalID: 177333972968279347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_8
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 39
+        width: 201
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6e782241493b9680800000000000000
+      internalID: -8747334898791448981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_9
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 107
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 729fb972d3e646b80800000000000000
+      internalID: -8402469795829909209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_10
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 56
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 612314e91b2d60450800000000000000
+      internalID: 6054758409352327702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Single_Slot_Animaton63_11
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 69
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68329f00a1edd99a0800000000000000
+      internalID: -6224574906689313914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Single_Slot_Animaton63_0: -6624833408270280308
+      Single_Slot_Animaton63_1: 8566812548932294448
+      Single_Slot_Animaton63_10: 6054758409352327702
+      Single_Slot_Animaton63_11: -6224574906689313914
+      Single_Slot_Animaton63_2: -4671973148069847356
+      Single_Slot_Animaton63_3: 4590387213222657123
+      Single_Slot_Animaton63_4: -5068819274896426560
+      Single_Slot_Animaton63_5: 4584376231286581663
+      Single_Slot_Animaton63_6: 456485275884242822
+      Single_Slot_Animaton63_7: 177333972968279347
+      Single_Slot_Animaton63_8: -8747334898791448981
+      Single_Slot_Animaton63_9: -8402469795829909209
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

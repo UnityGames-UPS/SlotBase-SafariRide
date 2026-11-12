@@ -9,20 +9,32 @@ public class SlotView : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameManager gameManager;
 
-    [Header("Symbol Sprites - Assign by Name")]
-    [SerializeField] private Sprite spriteLantern;           // ID: 0
-    [SerializeField] private Sprite spriteHammer;            // ID: 1
-    [SerializeField] private Sprite spriteMoneyPouch;         // ID: 2
-    [SerializeField] private Sprite spriteCoin;              // ID: 3
-    [SerializeField] private Sprite spriteA;                 // ID: 4
-    [SerializeField] private Sprite spriteK;                 // ID: 5
-    [SerializeField] private Sprite spriteQ;                 // ID: 6
-    [SerializeField] private Sprite spriteJ;                 // ID: 7
-    [SerializeField] private Sprite spriteTen;               // ID: 8
-    [SerializeField] private Sprite spriteNine;              // ID: 9
-    [SerializeField] private Sprite spriteWild;              // ID: 10
-    [SerializeField] private Sprite spriteUSpin;             // ID: 11
-    [SerializeField] private Sprite spriteMoneyBag;          // ID: 12
+    [Header("Regular Reel symbols - Assign by Name")]
+    [SerializeField] private Sprite spriteTiger;           // ID: 0
+    [SerializeField] private Sprite spriteOwl;             // ID: 2
+    [SerializeField] private Sprite spriteCat;             // ID: 3
+    [SerializeField] private Sprite spriteFrog;            // ID: 4
+    [SerializeField] private Sprite spriteDeer;            // ID: 5
+    [SerializeField] private Sprite spriteFox;             // ID: 6
+    [SerializeField] private Sprite spriteRedGem;          // ID: 7
+    [SerializeField] private Sprite spriteOrangeGem;       // ID: 8
+    [SerializeField] private Sprite spritePinkGem;         // ID: 9
+    [SerializeField] private Sprite spriteGreenGem;        // ID: 10
+    [SerializeField] private Sprite spriteRedStrawberry;   // ID: 11
+    [SerializeField] private Sprite spriteBlueberry;       // ID: 13
+
+    [Header("Special Symbol")]
+    [SerializeField] private Sprite spriteGoldCoin;        // ID: 1
+
+    [Header("Feature Trigger Symbols")]
+    [SerializeField] private Sprite spriteGoldStrawberry;  // ID: 12
+    [SerializeField] private Sprite spriteGoldBerries;     // ID: 14
+
+    [Header("Unknown symbols")]
+    [SerializeField] private Sprite spriteYinYang;         // ID: 15
+    [SerializeField] private Sprite spriteWildYingYang;    // ID: 16
+    [SerializeField] private Sprite spriteWildStrawberry;  // ID: 17
+
 
     // Internal array built from named sprites
     private Sprite[] symbolSprites;
@@ -205,19 +217,17 @@ public class SlotView : MonoBehaviour
     {
         // Build the symbol sprite array from named sprite fields
         symbolSprites = new Sprite[13];
-        symbolSprites[0] = spriteLantern;
-        symbolSprites[1] = spriteHammer;
-        symbolSprites[2] = spriteMoneyPouch;
-        symbolSprites[3] = spriteCoin;
-        symbolSprites[4] = spriteA;
-        symbolSprites[5] = spriteK;
-        symbolSprites[6] = spriteQ;
-        symbolSprites[7] = spriteJ;
-        symbolSprites[8] = spriteTen;
-        symbolSprites[9] = spriteNine;
-        symbolSprites[10] = spriteWild;
-        symbolSprites[11] = spriteUSpin;
-        symbolSprites[12] = spriteMoneyBag;
+        symbolSprites[0] = spriteTiger;
+        symbolSprites[1] = spriteOwl;
+        symbolSprites[2] = spriteCat;
+        symbolSprites[3] = spriteFrog;
+        symbolSprites[4] = spriteDeer;
+        symbolSprites[5] = spriteFox;
+        symbolSprites[6] = spriteRedGem;
+        symbolSprites[7] = spriteOrangeGem;
+        symbolSprites[8] = spritePinkGem;
+        symbolSprites[9] = spriteGreenGem;
+        symbolSprites[10] = spriteRedStrawberry;
 
         // Validate
         for (int i = 0; i < symbolSprites.Length; i++)

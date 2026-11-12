@@ -1,0 +1,546 @@
+fileFormatVersion: 2
+guid: 16d6a282ef3acb24ea40e4e00a21479e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2440466732061058399
+    second: Star_Animation_27_0
+  - first:
+      213: -2867406905710460043
+    second: Star_Animation_27_1
+  - first:
+      213: 3959437758601606539
+    second: Star_Animation_27_2
+  - first:
+      213: -6901681848194909022
+    second: Star_Animation_27_3
+  - first:
+      213: -8739728726231929549
+    second: Star_Animation_27_4
+  - first:
+      213: -2396774647348485258
+    second: Star_Animation_27_5
+  - first:
+      213: -5554353000893436671
+    second: Star_Animation_27_6
+  - first:
+      213: -5744114424562858515
+    second: Star_Animation_27_7
+  - first:
+      213: 5767566486861838011
+    second: Star_Animation_27_8
+  - first:
+      213: -8601449479548698315
+    second: Star_Animation_27_9
+  - first:
+      213: 6652190964847484212
+    second: Star_Animation_27_10
+  - first:
+      213: 2924297688310020406
+    second: Star_Animation_27_11
+  - first:
+      213: -8180745152077813498
+    second: Star_Animation_27_12
+  - first:
+      213: 2878897502753735461
+    second: Star_Animation_27_13
+  - first:
+      213: -579120857021298931
+    second: Star_Animation_27_14
+  - first:
+      213: 4727927605979132502
+    second: Star_Animation_27_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Star_Animation_27_0
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 1059
+        width: 47
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aa9755ff68b12ed0800000000000000
+      internalID: -2440466732061058399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_1
+      rect:
+        serializedVersion: 2
+        x: 691
+        y: 978
+        width: 44
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57340a68c9ce438d0800000000000000
+      internalID: -2867406905710460043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_2
+      rect:
+        serializedVersion: 2
+        x: 1006
+        y: 944
+        width: 54
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b85b7b7d9afb2f630800000000000000
+      internalID: 3959437758601606539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_3
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 795
+        width: 53
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2acb49dfcec4830a0800000000000000
+      internalID: -6901681848194909022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_4
+      rect:
+        serializedVersion: 2
+        x: 1204
+        y: 731
+        width: 63
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33d2baf470f36b680800000000000000
+      internalID: -8739728726231929549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_5
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 725
+        width: 63
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 673a12a2822fcbed0800000000000000
+      internalID: -2396774647348485258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_6
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 551
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10d2f98bf59fae2b0800000000000000
+      internalID: -5554353000893436671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_7
+      rect:
+        serializedVersion: 2
+        x: 1531
+        y: 519
+        width: 57
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de5cbbe4d5ec840b0800000000000000
+      internalID: -5744114424562858515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_8
+      rect:
+        serializedVersion: 2
+        x: 1241
+        y: 430
+        width: 76
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb6f8d379238a0050800000000000000
+      internalID: 5767566486861838011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_9
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 346
+        width: 49
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5310802554381a880800000000000000
+      internalID: -8601449479548698315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_10
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 330
+        width: 47
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43d1ccd0074515c50800000000000000
+      internalID: 6652190964847484212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_11
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 309
+        width: 75
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 639f6310141359820800000000000000
+      internalID: 2924297688310020406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_12
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 204
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 609276ca0a7287e80800000000000000
+      internalID: -8180745152077813498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_13
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 73
+        width: 147
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52345649606e3f720800000000000000
+      internalID: 2878897502753735461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_14
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 62
+        width: 71
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07c93b16ac86f7f0800000000000000
+      internalID: -579120857021298931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Star_Animation_27_15
+      rect:
+        serializedVersion: 2
+        x: 1255
+        y: 42
+        width: 76
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6523626ab19fc9140800000000000000
+      internalID: 4727927605979132502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Star_Animation_27_0: -2440466732061058399
+      Star_Animation_27_1: -2867406905710460043
+      Star_Animation_27_10: 6652190964847484212
+      Star_Animation_27_11: 2924297688310020406
+      Star_Animation_27_12: -8180745152077813498
+      Star_Animation_27_13: 2878897502753735461
+      Star_Animation_27_14: -579120857021298931
+      Star_Animation_27_15: 4727927605979132502
+      Star_Animation_27_2: 3959437758601606539
+      Star_Animation_27_3: -6901681848194909022
+      Star_Animation_27_4: -8739728726231929549
+      Star_Animation_27_5: -2396774647348485258
+      Star_Animation_27_6: -5554353000893436671
+      Star_Animation_27_7: -5744114424562858515
+      Star_Animation_27_8: 5767566486861838011
+      Star_Animation_27_9: -8601449479548698315
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,910 @@
+fileFormatVersion: 2
+guid: dba9e60dce6d0d14899d365673f98006
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3119623127934814551
+    second: yelloe red paylines_0
+  - first:
+      213: 5995117747808096194
+    second: yelloe red paylines_1
+  - first:
+      213: 709780230268767881
+    second: yelloe red paylines_2
+  - first:
+      213: 141274506399298540
+    second: yelloe red paylines_3
+  - first:
+      213: -7646339748562729251
+    second: yelloe red paylines_4
+  - first:
+      213: 6603758318407907493
+    second: yelloe red paylines_5
+  - first:
+      213: 8406901090807067977
+    second: yelloe red paylines_6
+  - first:
+      213: 8229843470182276172
+    second: yelloe red paylines_7
+  - first:
+      213: -6285429082036220281
+    second: yelloe red paylines_8
+  - first:
+      213: 833152081259343299
+    second: yelloe red paylines_9
+  - first:
+      213: 8212430850730783016
+    second: yelloe red paylines_10
+  - first:
+      213: -6669431101249693621
+    second: yelloe red paylines_11
+  - first:
+      213: -3742371945616539045
+    second: yelloe red paylines_12
+  - first:
+      213: -8681176679338571791
+    second: yelloe red paylines_13
+  - first:
+      213: -3424681380633071895
+    second: yelloe red paylines_14
+  - first:
+      213: 4560230546473537238
+    second: yelloe red paylines_15
+  - first:
+      213: 2121967948968459069
+    second: yelloe red paylines_16
+  - first:
+      213: 2396420189656549315
+    second: yelloe red paylines_17
+  - first:
+      213: 9109398918780948074
+    second: yelloe red paylines_18
+  - first:
+      213: 8626487954054234307
+    second: yelloe red paylines_19
+  - first:
+      213: -6342948480795513592
+    second: yelloe red paylines_20
+  - first:
+      213: 5089165753794941226
+    second: yelloe red paylines_21
+  - first:
+      213: -603936880773600910
+    second: yelloe red paylines_22
+  - first:
+      213: -4162112815457533091
+    second: yelloe red paylines_23
+  - first:
+      213: -5169380160071327662
+    second: yelloe red paylines_24
+  - first:
+      213: 7967951553052200065
+    second: yelloe red paylines_25
+  - first:
+      213: -3230990165963793521
+    second: yelloe red paylines_26
+  - first:
+      213: -6492510995187438170
+    second: yelloe red paylines_27
+  - first:
+      213: -3212039446056897331
+    second: yelloe red paylines_28
+  - first:
+      213: 4483403154416825411
+    second: yelloe red paylines_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: yelloe red paylines_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 794
+        width: 157
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a63a5a2b4fd4b4d0800000000000000
+      internalID: -3119623127934814551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_1
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 794
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cfcdb004dfe23350800000000000000
+      internalID: 5995117747808096194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_2
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 795
+        width: 157
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98ec3cddb55a9d900800000000000000
+      internalID: 709780230268767881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_3
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 794
+        width: 157
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce3bfb14a68e5f100800000000000000
+      internalID: 141274506399298540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_4
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 795
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd608feb28eb2e590800000000000000
+      internalID: -7646339748562729251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_5
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 661
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a8fb3fc33345ab50800000000000000
+      internalID: 6603758318407907493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_6
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 661
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 945366b10005ba470800000000000000
+      internalID: 8406901090807067977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_7
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 661
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4c58455807463270800000000000000
+      internalID: 8229843470182276172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_8
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 661
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78e42503d8ba5c8a0800000000000000
+      internalID: -6285429082036220281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_9
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 661
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cd27575763ff8b00800000000000000
+      internalID: 833152081259343299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_10
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 523
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8217440f85a68f170800000000000000
+      internalID: 8212430850730783016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_11
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 523
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b48d114efbb6173a0800000000000000
+      internalID: -6669431101249693621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_12
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 523
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b52832c1b8c601cc0800000000000000
+      internalID: -3742371945616539045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_13
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 523
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f78e931ec3468780800000000000000
+      internalID: -8681176679338571791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_14
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 523
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eea876dd661970d0800000000000000
+      internalID: -3424681380633071895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_15
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 385
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dec0785581394f30800000000000000
+      internalID: 4560230546473537238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_16
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 385
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3b770f5b9eb27d10800000000000000
+      internalID: 2121967948968459069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_17
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 384
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c78d09377bc14120800000000000000
+      internalID: 2396420189656549315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_18
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 385
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6e044f8d061b6e70800000000000000
+      internalID: 9109398918780948074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_19
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 385
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0c690d61177b770800000000000000
+      internalID: 8626487954054234307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_20
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 245
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80d649d86f159f7a0800000000000000
+      internalID: -6342948480795513592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_21
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 247
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a21d70e1a4950a640800000000000000
+      internalID: 5089165753794941226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_22
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 246
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2796bb25b926e97f0800000000000000
+      internalID: -603936880773600910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_23
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 247
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d538d8732743d36c0800000000000000
+      internalID: -4162112815457533091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_24
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 247
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2502ff9022ca248b0800000000000000
+      internalID: -5169380160071327662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_25
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 106
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18cc233b8b9d39e60800000000000000
+      internalID: 7967951553052200065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_26
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 107
+        width: 157
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8b92f400973923d0800000000000000
+      internalID: -3230990165963793521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_27
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 107
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ade88f06a7f5e5a0800000000000000
+      internalID: -6492510995187438170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_28
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 107
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc47c35542b8c63d0800000000000000
+      internalID: -3212039446056897331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yelloe red paylines_29
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 106
+        width: 157
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34471e33a6f383e30800000000000000
+      internalID: 4483403154416825411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      yelloe red paylines_0: -3119623127934814551
+      yelloe red paylines_1: 5995117747808096194
+      yelloe red paylines_10: 8212430850730783016
+      yelloe red paylines_11: -6669431101249693621
+      yelloe red paylines_12: -3742371945616539045
+      yelloe red paylines_13: -8681176679338571791
+      yelloe red paylines_14: -3424681380633071895
+      yelloe red paylines_15: 4560230546473537238
+      yelloe red paylines_16: 2121967948968459069
+      yelloe red paylines_17: 2396420189656549315
+      yelloe red paylines_18: 9109398918780948074
+      yelloe red paylines_19: 8626487954054234307
+      yelloe red paylines_2: 709780230268767881
+      yelloe red paylines_20: -6342948480795513592
+      yelloe red paylines_21: 5089165753794941226
+      yelloe red paylines_22: -603936880773600910
+      yelloe red paylines_23: -4162112815457533091
+      yelloe red paylines_24: -5169380160071327662
+      yelloe red paylines_25: 7967951553052200065
+      yelloe red paylines_26: -3230990165963793521
+      yelloe red paylines_27: -6492510995187438170
+      yelloe red paylines_28: -3212039446056897331
+      yelloe red paylines_29: 4483403154416825411
+      yelloe red paylines_3: 141274506399298540
+      yelloe red paylines_4: -7646339748562729251
+      yelloe red paylines_5: 6603758318407907493
+      yelloe red paylines_6: 8406901090807067977
+      yelloe red paylines_7: 8229843470182276172
+      yelloe red paylines_8: -6285429082036220281
+      yelloe red paylines_9: 833152081259343299
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

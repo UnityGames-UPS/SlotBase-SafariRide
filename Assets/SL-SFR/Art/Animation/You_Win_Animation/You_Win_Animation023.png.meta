@@ -1,0 +1,936 @@
+fileFormatVersion: 2
+guid: c2ac683f9b12cb34cb14097701a05dd1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2894994550417974309
+    second: You_Win_Animation023_0
+  - first:
+      213: -4740992850466880535
+    second: You_Win_Animation023_1
+  - first:
+      213: -2533084869598094493
+    second: You_Win_Animation023_2
+  - first:
+      213: 4106474593010505543
+    second: You_Win_Animation023_3
+  - first:
+      213: -6192718482106551687
+    second: You_Win_Animation023_4
+  - first:
+      213: -7749153594035281973
+    second: You_Win_Animation023_5
+  - first:
+      213: 1869637988367022501
+    second: You_Win_Animation023_6
+  - first:
+      213: -2336682573151923297
+    second: You_Win_Animation023_7
+  - first:
+      213: 5714661499456925879
+    second: You_Win_Animation023_8
+  - first:
+      213: -937223226330110253
+    second: You_Win_Animation023_9
+  - first:
+      213: -6836026191479277923
+    second: You_Win_Animation023_10
+  - first:
+      213: -8793733975332357308
+    second: You_Win_Animation023_11
+  - first:
+      213: 7014352331049760016
+    second: You_Win_Animation023_12
+  - first:
+      213: -3105923759168946729
+    second: You_Win_Animation023_13
+  - first:
+      213: 6384675382081500908
+    second: You_Win_Animation023_14
+  - first:
+      213: 1742937085095484099
+    second: You_Win_Animation023_15
+  - first:
+      213: -7438742978007698066
+    second: You_Win_Animation023_16
+  - first:
+      213: 6510226820464749633
+    second: You_Win_Animation023_17
+  - first:
+      213: -6110218357078747843
+    second: You_Win_Animation023_18
+  - first:
+      213: -1365942501826474316
+    second: You_Win_Animation023_19
+  - first:
+      213: -7118604645357185089
+    second: You_Win_Animation023_20
+  - first:
+      213: -7598473347726065517
+    second: You_Win_Animation023_21
+  - first:
+      213: 80885163544340929
+    second: You_Win_Animation023_22
+  - first:
+      213: -7220478332001010236
+    second: You_Win_Animation023_23
+  - first:
+      213: -1062429675542918365
+    second: You_Win_Animation023_24
+  - first:
+      213: -7950015452723244957
+    second: You_Win_Animation023_25
+  - first:
+      213: 405759569468671353
+    second: You_Win_Animation023_26
+  - first:
+      213: 7537338545718871858
+    second: You_Win_Animation023_27
+  - first:
+      213: -8137735117767464574
+    second: You_Win_Animation023_28
+  - first:
+      213: 7825557350695581822
+    second: You_Win_Animation023_29
+  - first:
+      213: 6840461258635518701
+    second: You_Win_Animation023_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: You_Win_Animation023_0
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 1034
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 524ea5c84361d2820800000000000000
+      internalID: 2894994550417974309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_1
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 939
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e341411f1c943eb0800000000000000
+      internalID: -4740992850466880535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_2
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 933
+        width: 101
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36b50b16bbca8dcd0800000000000000
+      internalID: -2533084869598094493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_3
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 951
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 747de83a2e02df830800000000000000
+      internalID: 4106474593010505543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_4
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 888
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 972fa08d95b0f0aa0800000000000000
+      internalID: -6192718482106551687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_5
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 882
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcfd59decd9757490800000000000000
+      internalID: -7749153594035281973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_6
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 899
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a9313b38d942f910800000000000000
+      internalID: 1869637988367022501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_7
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 893
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f931f6a749f629fd0800000000000000
+      internalID: -2336682573151923297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_8
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 371
+        width: 709
+        height: 501
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b03bbe2b5e8e4f40800000000000000
+      internalID: 5714661499456925879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_9
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 825
+        width: 80
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d62957f0705ef2f0800000000000000
+      internalID: -937223226330110253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_10
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 789
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d967c9dc56e8121a0800000000000000
+      internalID: -6836026191479277923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_11
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 764
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44bf7076a8166f580800000000000000
+      internalID: -8793733975332357308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_12
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 705
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01577ad084cf75160800000000000000
+      internalID: 7014352331049760016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_13
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 669
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ddf9430cca85e4d0800000000000000
+      internalID: -3105923759168946729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_14
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 578
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce6362bbe6cea9850800000000000000
+      internalID: 6384675382081500908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_15
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 531
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ca98fe5b08203810800000000000000
+      internalID: 1742937085095484099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_16
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 507
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e657b647ca644c890800000000000000
+      internalID: -7438742978007698066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_17
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 451
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14ca501fcc8f85a50800000000000000
+      internalID: 6510226820464749633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_18
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 387
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d35104e07c4243ba0800000000000000
+      internalID: -6110218357078747843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_19
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 403
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4be460b18823b0de0800000000000000
+      internalID: -1365942501826474316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_20
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 351
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb71a018ac2a53d90800000000000000
+      internalID: -7118604645357185089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_21
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 359
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 390c389afbccc8690800000000000000
+      internalID: -7598473347726065517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_22
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 291
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9e8a0b0ac5f1100800000000000000
+      internalID: 80885163544340929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_23
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 307
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cdbca87635bbcb90800000000000000
+      internalID: -7220478332001010236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_24
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 177
+        width: 139
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32b4e6ec6dd7141f0800000000000000
+      internalID: -1062429675542918365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_25
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 265
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3609095111fdba190800000000000000
+      internalID: -7950015452723244957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_26
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 263
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 975456abd2c81a500800000000000000
+      internalID: 405759569468671353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_27
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 264
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 237ce6909710a9860800000000000000
+      internalID: 7537338545718871858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_28
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 230
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 289af35a605f01f80800000000000000
+      internalID: -8137735117767464574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_29
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 117
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7838a9e2f6f99c60800000000000000
+      internalID: 7825557350695581822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: You_Win_Animation023_30
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 34
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de2aaccb5433eee50800000000000000
+      internalID: 6840461258635518701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      You_Win_Animation023_0: 2894994550417974309
+      You_Win_Animation023_1: -4740992850466880535
+      You_Win_Animation023_10: -6836026191479277923
+      You_Win_Animation023_11: -8793733975332357308
+      You_Win_Animation023_12: 7014352331049760016
+      You_Win_Animation023_13: -3105923759168946729
+      You_Win_Animation023_14: 6384675382081500908
+      You_Win_Animation023_15: 1742937085095484099
+      You_Win_Animation023_16: -7438742978007698066
+      You_Win_Animation023_17: 6510226820464749633
+      You_Win_Animation023_18: -6110218357078747843
+      You_Win_Animation023_19: -1365942501826474316
+      You_Win_Animation023_2: -2533084869598094493
+      You_Win_Animation023_20: -7118604645357185089
+      You_Win_Animation023_21: -7598473347726065517
+      You_Win_Animation023_22: 80885163544340929
+      You_Win_Animation023_23: -7220478332001010236
+      You_Win_Animation023_24: -1062429675542918365
+      You_Win_Animation023_25: -7950015452723244957
+      You_Win_Animation023_26: 405759569468671353
+      You_Win_Animation023_27: 7537338545718871858
+      You_Win_Animation023_28: -8137735117767464574
+      You_Win_Animation023_29: 7825557350695581822
+      You_Win_Animation023_3: 4106474593010505543
+      You_Win_Animation023_30: 6840461258635518701
+      You_Win_Animation023_4: -6192718482106551687
+      You_Win_Animation023_5: -7749153594035281973
+      You_Win_Animation023_6: 1869637988367022501
+      You_Win_Animation023_7: -2336682573151923297
+      You_Win_Animation023_8: 5714661499456925879
+      You_Win_Animation023_9: -937223226330110253
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
