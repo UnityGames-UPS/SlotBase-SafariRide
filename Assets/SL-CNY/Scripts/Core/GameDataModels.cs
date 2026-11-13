@@ -199,6 +199,16 @@ public class ServerWildCoinMysteryResult
 }
 
 [Serializable]
+public class WildCoinMysteryData
+{
+    public bool triggered;
+    public int coinCount;
+    public List<ServerPosition> positions;
+    public List<List<int>> matrixBefore;
+    public List<List<int>> matrixAfter;
+}
+
+[Serializable]
 public class ServerWaysWin
 {
     public int symbolId;
@@ -367,7 +377,9 @@ public class SpinResult
     public int serverTotalSpins;
     public double serverTotalRoundWin;
     public bool isRoundOver;
-    
+
+    public WildCoinMysteryData wildCoinMysteryData;
+
     // Server-authoritative wheel data
     public USpinResultData uSpinData;
     public MoneyBagResultData moneyBagData;
@@ -607,7 +619,7 @@ public static class InitDataConverter
 
         var result = new SpinResult
         {
-            resultMatrix = ConvertReelsToMatrix(serverResponse.payload.reels, serverResponse.matrix, serverResponse.payload.waysWins, gameConfig),
+            resultMatrix = ConvertReelsToMatrix(serverResponse.payload.reels, serverResponse.matrix, gameConfig),
             winAmount = winAmountVal,
             grandTotalWin = grandTotalWinVal,
             winLines = ConvertWinningLines(serverResponse.payload.lineWins),
@@ -645,7 +657,27 @@ public static class InitDataConverter
             serverTotalSpins = totalSpins,
             serverTotalRoundWin = totalRoundWin,
             isRoundOver = isRoundOver,
-            
+
+            wildCoinMysteryData = serverResponse.payload.wildCoinMystery != null
+                ? new WildCoinMysteryData
+                {
+                    triggered = serverResponse.payload.wildCoinMystery.triggered,
+                    coinCount = serverResponse.payload.wildCoinMystery.coinCount,
+                    positions = serverResponse.payload.wildCoinMystery.positions,
+                    matrixBefore = ConvertReelsToMatrix(
+                        null,
+                        serverResponse.payload.wildCoinMystery.matrixBefore,
+                        gameConfig
+                     ),
+                     matrixAfter = ConvertReelsToMatrix(
+                        null,
+                        serverResponse.payload.wildCoinMystery.matrixAfter,
+                        gameConfig
+                    )
+            }
+            : null,
+
+
             uSpinData = (serverResponse.payload.uSpin != null && serverResponse.payload.uSpin.triggered && serverResponse.payload.uSpin.result != null)
                 ? new USpinResultData
                 {
@@ -673,7 +705,11 @@ public static class InitDataConverter
         return result;
     }
 
-    private static List<List<int>> ConvertReelsToMatrix(List<List<string>> serverReels, List<List<string>> serverMatrix, List<ServerWaysWin> waysWins, GameConfig gameConfig)
+    private static List<List<int>> ConvertReelsToMatrix(
+        List<List<string>> serverReels, 
+        List<List<string>> serverMatrix, 
+        GameConfig gameConfig
+        )
     {
         var sourceReels = serverMatrix ?? serverReels;
         int rowCount = gameConfig != null ? gameConfig.rowCount : 3;
@@ -737,7 +773,6 @@ public static class InitDataConverter
         var winLines = new List<WinLine>();
         if (serverLineWins == null) return winLines;
 
-        int index = 0;
         foreach (var serverWin in serverLineWins)
         {
             var flatPositions = new List<int>();
