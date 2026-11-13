@@ -392,7 +392,7 @@ public class SpinResult
 public class WinLine
 {
     public int lineId;
-    public int symbolId;
+    public List<int> symbolIds;  
     public List<int> positions;  // Flat list: [row * 5 + col]
     public double winAmount;
 }
@@ -610,7 +610,7 @@ public static class InitDataConverter
             resultMatrix = ConvertReelsToMatrix(serverResponse.payload.reels, serverResponse.matrix, serverResponse.payload.waysWins, gameConfig),
             winAmount = winAmountVal,
             grandTotalWin = grandTotalWinVal,
-            winLines = ConvertWinningLines(serverResponse.payload.waysWins, gameConfig),
+            winLines = ConvertWinningLines(serverResponse.payload.lineWins),
 
             playerData = new PlayerData
             {
@@ -732,18 +732,18 @@ public static class InitDataConverter
         return matrix;
     }
 
-    private static List<WinLine> ConvertWinningLines(List<ServerWaysWin> serverWaysWins, GameConfig gameConfig)
+    private static List<WinLine> ConvertWinningLines(List<ServerLineWin> serverLineWins)
     {
         var winLines = new List<WinLine>();
-        if (serverWaysWins == null) return winLines;
+        if (serverLineWins == null) return winLines;
 
         int index = 0;
-        foreach (var waysWin in serverWaysWins)
+        foreach (var serverWin in serverLineWins)
         {
             var flatPositions = new List<int>();
-            if (waysWin.matchedPositions != null)
+            if (serverWin.matchedPositions != null)
             {
-                foreach (var pos in waysWin.matchedPositions)
+                foreach (var pos in serverWin.matchedPositions)
                 {
                     int flatIndex = pos.row * 5 + pos.col;
                     flatPositions.Add(flatIndex);
@@ -752,10 +752,10 @@ public static class InitDataConverter
 
             winLines.Add(new WinLine
             {
-                lineId = index++,
-                symbolId = waysWin.symbolId,
+                lineId = serverWin.lineIndex,
+                symbolIds = serverWin.symbolIds,
                 positions = flatPositions,
-                winAmount = waysWin.winInCash
+                winAmount = serverWin.winInCash
             });
         }
 
