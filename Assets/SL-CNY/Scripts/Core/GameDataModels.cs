@@ -44,7 +44,7 @@ public class ServerGameData
 {
     public List<List<int>> lines;
     public List<double> bets;
-    public double creditDivisor = 25;
+    public double creditDivisor = 25; //not in safari ride server init
     public int totalLines;
 }
 
@@ -168,9 +168,34 @@ public class ServerPayload
     public double grandTotalWin;
     public double netReturnRatio;
     public List<ServerWaysWin> waysWins;
+    public List<ServerLineWin> lineWins;
+    public ServerWildCoinMysteryResult wildCoinMystery;
     public ServerUSpinResult uSpin;
     public ServerMoneyBagResult moneyBag;
     public ServerFreeGamesResult freeGames;
+}
+
+[Serializable]
+public class ServerLineWin
+{
+    public int lineIndex;
+    public List<ServerPosition> matchedPositions;
+    public List<int> symbolIds;
+    public double basePayout;
+    public double winInCredits;
+    public double winInCash;
+    public string winType;
+    public int matchLength;
+}
+
+[Serializable]
+public class ServerWildCoinMysteryResult
+{
+    public bool triggered;
+    public int coinCount;
+    public List<ServerPosition> positions;
+    public List<List<string>> matrixBefore;
+    public List<List<string>> matrixAfter;
 }
 
 [Serializable]

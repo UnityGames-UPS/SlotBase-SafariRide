@@ -347,12 +347,12 @@ public class SocketIOManager : MonoBehaviour
 
   private void OnResultReceived(string jsonData)
   {
-    if (!jsonData.Contains("\"id\":\"ResultData\""))
-    {
-      return;
-    }
+        //if (!jsonData.Contains("\"id\":\"ResultData\""))
+        //{
+        //    return;
+        //}
 
-    Debug.Log($"[SocketIO] Result received: {jsonData}");
+        Debug.Log($"[SocketIO] Result received: {jsonData}");
 
     try
     {
