@@ -656,6 +656,42 @@ public static class InitDataConverter
     /// </summary>
     internal static SpinResult ConvertServerResponseToSpinResult(ServerSpinResponse serverResponse, double currentBalance, double betAmount, GameConfig gameConfig)
     {
+        double winAmount = serverResponse.payload.winAmount;
+        double totalBetAmount = serverResponse.payload.totalBetAmount;
+
+        double newBalance = serverResponse.player?.balance ??
+            (currentBalance - totalBetAmount + winAmount);
+
+        SpinResult result = new SpinResult
+        {
+            resultMatrix = ConvertReelsToMatrix(
+                null,
+                serverResponse.matrix,
+                gameConfig),
+
+            winAmount = winAmount,
+            grandTotalWin = serverResponse.payload.grandTotalWin,
+
+            winLines = ConvertWinningLines(serverResponse.payload.lineWins),
+
+            playerData = new PlayerData
+            {
+                balance = newBalance,
+                currentBetIndex = 0
+            },
+
+            freeSpinData = null,
+            scatterData = null,
+            overlayScatterData = null,
+            stickyWilds = null,
+            wildCoinMysteryData = null,
+            uSpinData = null,
+            moneyBagData = null,
+        };
+
+        return result;
+
+        /*
         double winAmountVal = serverResponse.payload.winAmount > 0 ? serverResponse.payload.winAmount : serverResponse.payload.totalWin;
         double totalPay = (gameConfig != null && gameConfig.creditDivisor > 0) ? betAmount * gameConfig.creditDivisor : betAmount * 25;
         double newBalance = serverResponse.player?.balance ?? CalculateNewBalance(currentBalance, totalPay, winAmountVal);
@@ -770,6 +806,7 @@ public static class InitDataConverter
         };
 
         return result;
+    */
     }
 
     private static List<List<int>> ConvertReelsToMatrix(
