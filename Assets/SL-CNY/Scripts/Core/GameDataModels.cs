@@ -85,7 +85,7 @@ public class WildCoinMysteryFeature
     public int minCoins;
     public int tigerSymbolId;
     public int coinWildSymbolId;
-    public double triggerPorbability;
+    public double triggerProbability;
     public List<int> strawberrySymbolIds;
     public int wildYinYangSymbolId;
     public int wildStrawberrySymbolId;
@@ -581,7 +581,7 @@ public static class InitDataConverter
         var config = new GameConfig
         {
             reelCount = 5,
-            rowCount = (serverData.gameData.totalLines == 243) ? 3 : (serverData.gameData.totalLines == 1024 ? 4 : 3),
+            rowCount = 3,
             symbolCount = serverData.uiData.paylines.symbols.Count,
             paylineCount = serverData.gameData.totalLines,
             paylines = serverData.gameData.lines,
