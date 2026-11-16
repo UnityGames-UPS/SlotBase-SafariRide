@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Best.HTTP.SecureProtocol.Org.BouncyCastle.Asn1.Mozilla;
 using Newtonsoft.Json;
 
 #region Server Communication Models
@@ -51,12 +52,78 @@ public class ServerGameData
 [Serializable]
 public class ServerFeatures
 {
-    public USpinFeature uSpin;
-    public MoneyBagFeature moneyBag;
+    
+    public USpinFeature uSpin; //Mark for removal
+    public MoneyBagFeature moneyBag; //mark for removal
+    public int betMultiplier; //mark for removal
+    public int maxWinMultiplier; //mark for removal
+    public int minWinMultiplier;  //mark for removal
+
     public FreeGamesFeature freeGames;
-    public int betMultiplier;
-    public int maxWinMultiplier;
-    public int minWinMultiplier;
+    public MiexedWildFeature mixedWild;
+    public PickBonusFeature pickBonus;
+    public List<WildRule> wildRules;
+    public WildCoinMysteryFeature wildCoinMystery;
+    public List<PaytableEntry> paytable;
+}
+[Serializable]
+public class PaytableEntry
+{
+    public string winType;
+    public string name;
+    public double payoutMultiplier;
+    public string betMultiplierDescription;
+    public string group;
+    public List<int> symbolIds;
+}
+
+[Serializable]
+public class WildCoinMysteryFeature
+{
+    public bool enabled;
+    public int maxCoins;
+    public int minCoins;
+    public int triggerSymbolId;
+    public int coinWildSymbolId;
+    public double triggerPortability;
+    public List<int> strawberrySymbolIds;
+    public int wildYingYangSymbolId;
+    public int wildStrawberrySymbolId;
+}
+
+[Serializable]
+public class WildRule
+{
+    public int symbolId;
+    public List<int> substituteAllExcept;
+}
+
+[Serializable]
+public class PickBonusFeature
+{
+    public List<PickBonusAnimal> animals;
+    public bool enabled;
+    public int gridSize;
+    public int initialPicks;
+    public int triggerCount;
+    public List<int> triggerSymbolIds;
+}
+
+[Serializable]
+public class PickBonusAnimal
+{
+    public string Name;
+    public int weight;
+    public string animalId;
+    public Dictionary<string, double> multipliers;
+}
+
+[Serializable]
+public class MiexedWildFeature
+{
+    public bool enabled;
+    public Dictionary<string, double> payouts;
+    public List<int> symbolIds;
 }
 
 [Serializable]
