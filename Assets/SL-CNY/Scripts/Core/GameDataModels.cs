@@ -83,11 +83,11 @@ public class WildCoinMysteryFeature
     public bool enabled;
     public int maxCoins;
     public int minCoins;
-    public int triggerSymbolId;
+    public int tigerSymbolId;
     public int coinWildSymbolId;
-    public double triggerPortability;
+    public double triggerPorbability;
     public List<int> strawberrySymbolIds;
-    public int wildYingYangSymbolId;
+    public int wildYinYangSymbolId;
     public int wildStrawberrySymbolId;
 }
 
@@ -157,7 +157,7 @@ public class MoneyBagFeature
 public class FreeGamesFeature
 {
     public bool enabled;
-    public int spinCount;
+    public int spinsCount;
     public int retriggerSpins;
     public List<int> yinYangSymbolIds;
 }
