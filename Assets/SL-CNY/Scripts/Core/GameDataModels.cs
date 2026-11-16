@@ -226,12 +226,15 @@ public class ServerPlayerBalance
 public class ServerPayload
 {
     public List<List<string>> reels;        // Keep for fallback compatibility
+
+    public double betAmountPerLine;
+    public double totalBetAmount;
     public double totalWin;                  // Keep for fallback compatibility
     public int scatterCount;
     public bool scatterTriggered;
     public bool isRoundOver;                 // True when free spin round is over
     public double totalRoundWin;             // Total round win (at payload level when isRoundOver)
-
+    
     // CNY fields
     public double winAmount;
     public double grandTotalWin;
