@@ -157,8 +157,9 @@ public class MoneyBagFeature
 public class FreeGamesFeature
 {
     public bool enabled;
-    public double payMultiplier;
-    public int maxTotalFreeGames;
+    public int spinCount;
+    public int retriggerSpins;
+    public List<int> yinYangSymbolIds;
 }
 
 [Serializable]
@@ -188,9 +189,10 @@ public class ServerSymbolInfo
     public int id;
     public string name;
     public List<double> multiplier; // Keep for fallback compatibility
-    public List<double> payout;
     public string description;
-    public int minMatch;
+
+//    public List<double> payout;
+//    public int minMatch;
 }
 
 
@@ -594,49 +596,44 @@ public static class InitDataConverter
             {
                 id = serverSymbol.id,
                 name = serverSymbol.name,
-                multipliers = new List<double>(),
-                isWild = serverSymbol.name.ToLower().Contains("wild"),
-                isScatter = serverSymbol.name.ToLower().Contains("scatter") || 
-                            serverSymbol.name.ToLower().Contains("uspin") || 
-                            serverSymbol.name.ToLower().Contains("moneybag"),
-                minMatch = serverSymbol.minMatch
+                multipliers = serverSymbol.multiplier ?? new List<double>(),
+                isWild = false,
+                isScatter = false,
             };
 
-            // Store raw payout values for info page
-            if (serverSymbol.payout != null)
-            {
-                for (int i = serverSymbol.payout.Count - 1; i >= 0; i--)
-                {
-                    symbolInfo.multipliers.Add(serverSymbol.payout[i]);
-                }
-            }
             config.symbols.Add(symbolInfo);
+        }
 
-            if (symbolInfo.isWild)
+        // Identify wild symbols from backend wildRules
+        if (serverData.features?.wildRules != null)
+        {
+            HashSet<int> wildIds = serverData.features.wildRules
+                .Select(rule => rule.symbolId)
+                .ToHashSet();
+
+            foreach (var symbol in config.symbols)
             {
-                config.wildSymbolId = symbolInfo.id;
-            }
-            if (symbolInfo.isScatter && symbolInfo.name.ToLower().Contains("uspin"))
-            {
-                config.scatterSymbolId = symbolInfo.id;
+                symbol.isWild = wildIds.Contains(symbol.id);
             }
         }
 
-        if (serverData.features != null)
+        // Identify feature-trigger symbols
+
+        HashSet<int> scatterIds = new HashSet<int>();
+
+        if (serverData.features?.freeGames?.yinYangSymbolIds != null)
         {
-            config.betMultiplier = serverData.features.betMultiplier > 0 ? serverData.features.betMultiplier : 1;
-            config.maxWinMultiplier = serverData.features.maxWinMultiplier;
-            config.minWinMultiplier = serverData.features.minWinMultiplier;
+            scatterIds.UnionWith(serverData.features.freeGames.yinYangSymbolIds);
+        }
 
-            if (serverData.features.freeGames != null)
-            {
-                config.initialFreeSpins = serverData.features.freeGames.maxTotalFreeGames;
-            }
+        if(serverData.features?.pickBonus?.triggerSymbolIds != null)
+        {
+            scatterIds.UnionWith(serverData.features.pickBonus.triggerSymbolIds);
+        }
 
-            if (serverData.features.uSpin != null && serverData.features.uSpin.segments != null)
-            {
-                config.uSpinSegments = serverData.features.uSpin.segments;
-            }
+        foreach(SymbolInfo symbol in config.symbols)
+        {
+            symbol.isScatter = scatterIds.Contains(symbol.id);
         }
 
         return config;
