@@ -662,11 +662,29 @@ public static class InitDataConverter
         double newBalance = serverResponse.player?.balance ??
             (currentBalance - totalBetAmount + winAmount);
 
+        // When wildCoinMystery triggers, reels land on matrixBefore (base symbols), NOT serverResponse.matrix (which already contains gold coins)
+        var sourceMatrix = (serverResponse.payload?.wildCoinMystery != null 
+            && serverResponse.payload.wildCoinMystery.triggered 
+            && serverResponse.payload.wildCoinMystery.matrixBefore != null)
+            ? serverResponse.payload.wildCoinMystery.matrixBefore
+            : serverResponse.matrix;
+
+        WildCoinMysteryData mysteryData = (serverResponse.payload?.wildCoinMystery != null && serverResponse.payload.wildCoinMystery.triggered)
+            ? new WildCoinMysteryData
+            {
+                triggered = true,
+                coinCount = serverResponse.payload.wildCoinMystery.coinCount,
+                positions = serverResponse.payload.wildCoinMystery.positions,
+                matrixBefore = ConvertReelsToMatrix(null, serverResponse.payload.wildCoinMystery.matrixBefore, gameConfig),
+                matrixAfter = ConvertReelsToMatrix(null, serverResponse.payload.wildCoinMystery.matrixAfter, gameConfig)
+            }
+            : null;
+
         SpinResult result = new SpinResult
         {
             resultMatrix = ConvertReelsToMatrix(
                 null,
-                serverResponse.matrix,
+                sourceMatrix,
                 gameConfig),
 
             winAmount = winAmount,
@@ -684,7 +702,7 @@ public static class InitDataConverter
             scatterData = null,
             overlayScatterData = null,
             stickyWilds = null,
-            wildCoinMysteryData = null,
+            wildCoinMysteryData = mysteryData,
             uSpinData = null,
             moneyBagData = null,
         };

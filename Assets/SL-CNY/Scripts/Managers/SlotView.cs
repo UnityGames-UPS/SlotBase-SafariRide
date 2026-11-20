@@ -49,7 +49,11 @@ public class SlotView : MonoBehaviour
     [Header("Reel Containers")]
     [SerializeField] private Transform[] reelTransforms;
 
-    [Header("Reel Images - 7 images per reel")]
+    [Header("Reel Configuration")]
+    [Tooltip("Starting index of visible symbols in the reel strip images list (e.g. 2 for 7-image strip, or 10 for 14-image strip)")]
+    [SerializeField] private int visibleStartIndex = 2;
+
+    [Header("Reel Images")]
     [SerializeField] private List<ReelImages> reelImagesList;
 
     [Header("Spin Settings")]
@@ -130,7 +134,39 @@ public class SlotView : MonoBehaviour
             BuildSymbolSpriteArray();
         }
         DisableAllOverlays();
+        SanitizeAllReelStripImages();
         SetupSymbolButtons();
+    }
+
+    private void SanitizeAllReelStripImages()
+    {
+        if (reelImagesList == null) return;
+        for (int col = 0; col < reelImagesList.Count; col++)
+        {
+            var reel = reelImagesList[col];
+            if (reel == null || reel.images == null) continue;
+            for (int i = 0; i < reel.images.Count; i++)
+            {
+                if (reel.images[i] != null)
+                {
+                    if (!IsBaseSymbolSprite(reel.images[i].sprite))
+                    {
+                        reel.images[i].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsBaseSymbolSprite(Sprite s)
+    {
+        if (s == null || symbolSprites == null) return false;
+        foreach (int id in baseSymbolIds)
+        {
+            if (id >= 0 && id < symbolSprites.Length && symbolSprites[id] == s)
+                return true;
+        }
+        return false;
     }
 
     private void DisableAllOverlays()
@@ -144,18 +180,18 @@ public class SlotView : MonoBehaviour
     private void SetupSymbolButtons()
     {
         if (reelImagesList == null) return;
+        int rowCount = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
+
         for (int col = 0; col < reelImagesList.Count; col++)
         {
             var reel = reelImagesList[col];
             if (reel == null || reel.images == null) continue;
-            int visibleStartIndex = 2;
-            int rowCount = 3;
+
             for (int row = 0; row < rowCount; row++)
             {
-                int imageIndex = visibleStartIndex + row;
-                if (imageIndex < reel.images.Count && reel.images[imageIndex] != null)
+                Image img = GetVisibleImage(col, row);
+                if (img != null)
                 {
-                    Image img = reel.images[imageIndex];
                     SymbolButtonHandler btnHandler = img.GetComponent<SymbolButtonHandler>();
                     if (btnHandler == null)
                     {
@@ -298,13 +334,31 @@ public class SlotView : MonoBehaviour
     #endregion
 
     #region Symbol Display
-    private readonly List<int> regularSymbolIds = new List<int> { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13 };
+    // Base symbols allowed on the spinning strip and initial view:
+    // 0: Tiger, 2: Owl, 3: Cat, 4: Frog, 5: Deer, 6: Fox
+    // 7: RedGem, 8: OrangeGem, 9: PinkGem, 10: GreenGem
+    // 11: RedStrawberry (Scatter), 13: Blueberry (Special), 15: YinYang (Scatter)
+    private readonly List<int> baseSymbolIds = new List<int> { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15 };
 
-    private int GetRandomRegularSymbolId()
+    public int VisibleStartIndex => visibleStartIndex;
+
+    public Image GetVisibleImage(int col, int row)
     {
-        int randomIndex = Random.Range(0, regularSymbolIds.Count);
-        return regularSymbolIds[randomIndex];
+        if (col < 0 || col >= reelImagesList.Count) return null;
+        var reel = reelImagesList[col];
+        if (reel == null || reel.images == null) return null;
+        int imageIndex = visibleStartIndex + row;
+        if (imageIndex < 0 || imageIndex >= reel.images.Count) return null;
+        return reel.images[imageIndex];
     }
+
+    private int GetRandomBaseSymbolId()
+    {
+        int randomIndex = Random.Range(0, baseSymbolIds.Count);
+        return baseSymbolIds[randomIndex];
+    }
+
+    private int GetRandomRegularSymbolId() => GetRandomBaseSymbolId();
 
     private void SetReelSymbols(int columnIndex, List<int> visibleSymbolIds, bool isInitial = false)
     {
@@ -324,32 +378,35 @@ public class SlotView : MonoBehaviour
 
         var reel = reelImagesList[columnIndex];
 
-        if (reel.images == null || reel.images.Count != 7)
+        if (reel.images == null || reel.images.Count < (visibleStartIndex + rowCount))
         {
-            Debug.LogError($"SetReelSymbols: Reel {columnIndex} has invalid image count {reel.images?.Count}, expected 7");
+            Debug.LogError($"SetReelSymbols: Reel {columnIndex} has invalid image count {reel.images?.Count}, expected at least {visibleStartIndex + rowCount}");
             return;
         }
 
-        int visibleStartIndex = 2;
         for (int row = 0; row < rowCount; row++)
         {
             int imageIndex = visibleStartIndex + row;
             if (imageIndex < reel.images.Count)
             {
                 int symbolId = visibleSymbolIds[row];
+                if (!baseSymbolIds.Contains(symbolId))
+                {
+                    Debug.LogWarning($"[SlotView] Non-base symbol ID {symbolId} received for reel stop. Mapping to base symbol.");
+                    symbolId = GetRandomBaseSymbolId();
+                }
                 reel.images[imageIndex].sprite = GetSymbolSprite(symbolId);
             }
         }
 
-        
         for (int i = 0; i < visibleStartIndex; i++)
         {
-            reel.images[i].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
+            reel.images[i].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
         }
 
         for (int i = visibleStartIndex + rowCount; i < reel.images.Count; i++)
         {
-            reel.images[i].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
+            reel.images[i].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
         }
 
         if (isInitial && reelTransforms[columnIndex] != null)
@@ -500,14 +557,14 @@ public class SlotView : MonoBehaviour
     private void CycleReelSymbols(int columnIndex)
     {
         var reel = reelImagesList[columnIndex];
-        if (reel.images == null || reel.images.Count != 7) return;
+        if (reel.images == null || reel.images.Count == 0) return;
 
-        for (int i = 6; i > 0; i--)
+        for (int i = reel.images.Count - 1; i > 0; i--)
         {
             reel.images[i].sprite = reel.images[i - 1].sprite;
         }
 
-        reel.images[0].sprite = GetSymbolSprite(GetRandomRegularSymbolId());
+        reel.images[0].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
     }
 
     #endregion
@@ -757,10 +814,7 @@ public class SlotView : MonoBehaviour
                     if (animGO != null)
                     {
                         ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
-                        int imageIndex = 2 + row;
-                        Image symbolImage = (col < reelImagesList.Count && reelImagesList[col].images != null && imageIndex < reelImagesList[col].images.Count)
-                            ? reelImagesList[col].images[imageIndex]
-                            : null;
+                        Image symbolImage = GetVisibleImage(col, row);
 
                         if (imageAnim != null)
                         {
@@ -841,15 +895,7 @@ public class SlotView : MonoBehaviour
 
     private void AnimateSymbolSingleLoop(int column, int row, int loopCount = 1)
     {
-        if (column >= reelImagesList.Count) return;
-
-        var reel = reelImagesList[column];
-        if (reel.images == null || reel.images.Count != 7) return;
-
-        int imageIndex = 2 + row;
-        if (imageIndex >= reel.images.Count) return;
-
-        Image symbolImage = reel.images[imageIndex];
+        Image symbolImage = GetVisibleImage(column, row);
         if (symbolImage == null) return;
 
         var animGO = WinBox(winAnimationColumns, column, row);
@@ -1033,14 +1079,7 @@ public class SlotView : MonoBehaviour
 
             EnableWinBox(col, row);
 
-            if (col >= reelImagesList.Count) continue;
-            var reel = reelImagesList[col];
-            if (reel.images == null || reel.images.Count != 7) continue;
-
-            int imageIndex = 2 + row;
-            if (imageIndex >= reel.images.Count) continue;
-
-            Image symbolImage = reel.images[imageIndex];
+            Image symbolImage = GetVisibleImage(col, row);
             if (symbolImage == null) continue;
 
             var animGO = WinBox(winAnimationColumns, col, row);
@@ -1118,13 +1157,7 @@ public class SlotView : MonoBehaviour
 
     private void ShowWinLineTextOnIcon(int col, int row, double winAmount)
     {
-        if (col < 0 || col >= reelImagesList.Count) return;
-        var reel = reelImagesList[col];
-        if (reel.images == null) return;
-        int imageIndex = 2 + row;
-        if (imageIndex >= reel.images.Count) return;
-
-        Image symbolImage = reel.images[imageIndex];
+        Image symbolImage = GetVisibleImage(col, row);
         if (symbolImage == null) return;
 
         Transform textTransform = symbolImage.transform.Find("WinLineText");
@@ -1215,18 +1248,14 @@ public class SlotView : MonoBehaviour
 
     private void ResetSymbolScale(int col, int row)
     {
-        if (col >= reelImagesList.Count) return;
-        var reel = reelImagesList[col];
-        if (reel.images == null) return;
-        int imageIndex = 2 + row;
-        if (imageIndex >= reel.images.Count) return;
-        if (reel.images[imageIndex] != null)
+        Image symbolImage = GetVisibleImage(col, row);
+        if (symbolImage != null)
         {
-            reel.images[imageIndex].DOKill();
-            reel.images[imageIndex].transform.localScale = Vector3.one;
+            symbolImage.DOKill();
+            symbolImage.transform.localScale = Vector3.one;
             // Restore alpha to full opacity
-            Color c = reel.images[imageIndex].color;
-            reel.images[imageIndex].color = new Color(c.r, c.g, c.b, 1f);
+            Color c = symbolImage.color;
+            symbolImage.color = new Color(c.r, c.g, c.b, 1f);
         }
 
         // Also ensure the corresponding animation object is disabled
@@ -1246,31 +1275,10 @@ public class SlotView : MonoBehaviour
 
     private void AnimateWinSymbol(int column, int row)
     {
-
-        if (column >= reelImagesList.Count)
-        {
-            Debug.LogError($"[AnimateWinSymbol] Invalid column {column}, max is {reelImagesList.Count - 1}");
-            return;
-        }
-
-        var reel = reelImagesList[column];
-        if (reel.images == null || reel.images.Count != 7)
-        {
-            Debug.LogError($"[AnimateWinSymbol] Reel {column} has invalid images list");
-            return;
-        }
-
-        int imageIndex = 2 + row;
-        if (imageIndex >= reel.images.Count)
-        {
-            Debug.LogError($"[AnimateWinSymbol] Image index {imageIndex} out of range for reel {column}");
-            return;
-        }
-
-        Image symbolImage = reel.images[imageIndex];
+        Image symbolImage = GetVisibleImage(column, row);
         if (symbolImage == null)
         {
-            Debug.LogError($"[AnimateWinSymbol] Symbol image is NULL at col: {column}, row: {row}, imageIndex: {imageIndex}");
+            Debug.LogError($"[AnimateWinSymbol] Image out of range or null for col {column}, row {row}");
             return;
         }
 

@@ -687,6 +687,7 @@ public class SocketIOManager : MonoBehaviour
   }
 
   #endregion
+  private static readonly int[] BaseSymbolPool = { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15 };
   private List<List<int>> GenerateRandomMatrix(int rowCount)
   {
     var matrix = new List<List<int>>();
@@ -695,7 +696,8 @@ public class SocketIOManager : MonoBehaviour
       var column = new List<int>();
       for (int row = 0; row < rowCount; row++)
       {
-        column.Add(UnityEngine.Random.Range(0, 10));
+        int symbol = BaseSymbolPool[UnityEngine.Random.Range(0, BaseSymbolPool.Length)];
+        column.Add(symbol);
       }
       matrix.Add(column);
     }
