@@ -50,17 +50,31 @@ public class SlotView : MonoBehaviour
     [SerializeField] private Transform[] reelTransforms;
 
     [Header("Reel Configuration")]
-    [Tooltip("Starting index of visible symbols in the reel strip images list (e.g. 2 for 7-image strip, or 10 for 14-image strip)")]
-    [SerializeField] private int visibleStartIndex = 2;
+    [Tooltip("Starting index of visible symbols in the reel strip images list (5 for 12-image strip)")]
+    [SerializeField] private int visibleStartIndex = 5;
 
     [Header("Reel Images")]
     [SerializeField] private List<ReelImages> reelImagesList;
 
-    [Header("Spin Settings")]
-    [SerializeField] private float symbolHeight = 100f;
-    [SerializeField] private float spinSpeed = 2000f;
+    [Header("Continuous Spin Animation Settings")]
+    [Tooltip("Total vertical distance the reel container scrolls per loop cycle (975 = exactly 3 symbols: 3 * 325px)")]
+    [SerializeField] private float spinLoopDistance = 975f;
+    [Tooltip("Duration in seconds for one complete loop cycle")]
+    [SerializeField] private float spinLoopDuration = 0.20f;
+    [Tooltip("Stagger delay between each reel starting its spin")]
     [SerializeField] private float reelStartStagger = 0.08f;
-    [SerializeField] private float reelStopStagger = 0.12f;
+    [Tooltip("Stagger delay between each reel stopping")]
+    [SerializeField] private float reelStopStagger = 0.15f;
+    [Tooltip("Minimum spin duration before reels begin stopping")]
+    [SerializeField] private float minSpinDuration = 0.4f;
+
+    [Header("Reel Resting Position")]
+    [Tooltip("Target anchored Y position for reels at rest")]
+    [SerializeField] private float restingAnchoredY = 111.8f;
+
+    [Header("Reel Dimensions")]
+    [SerializeField] private float symbolHeight = 225f;
+    [SerializeField] private float spinSpeed = 2000f;
 
     [Header("Animation Settings - Casino Style")]
     [SerializeField] private float anticipationUpDistance = 20f;
@@ -105,7 +119,7 @@ public class SlotView : MonoBehaviour
     [SerializeField] private SymbolInfoCard symbolInfoCard;
 
 
-    private float middlePosition = 0f;
+    private RectTransform[] reelRectTransforms;
     private float cycleDistance;
 
 
@@ -136,6 +150,42 @@ public class SlotView : MonoBehaviour
         DisableAllOverlays();
         SanitizeAllReelStripImages();
         SetupSymbolButtons();
+
+        // Ensure every symbol on every reel strip is active, enabled, and fully opaque
+        if (reelImagesList != null)
+        {
+            foreach (var reel in reelImagesList)
+            {
+                if (reel?.images != null)
+                {
+                    foreach (var img in reel.images)
+                    {
+                        if (img != null)
+                        {
+                            img.gameObject.SetActive(true);
+                            img.enabled = true;
+                            Color c = img.color;
+                            img.color = new Color(c.r, c.g, c.b, 1f);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Lock all reels to their exact resting anchored position on game start
+        if (reelRectTransforms != null)
+        {
+            for (int col = 0; col < reelRectTransforms.Length; col++)
+            {
+                if (reelRectTransforms[col] != null)
+                {
+                    reelRectTransforms[col].anchoredPosition = new Vector2(
+                        reelRectTransforms[col].anchoredPosition.x,
+                        restingAnchoredY
+                    );
+                }
+            }
+        }
     }
 
     private void SanitizeAllReelStripImages()
@@ -240,9 +290,58 @@ public class SlotView : MonoBehaviour
     {
         if (cols == null) return;
         foreach (var col in cols)
+        {
             if (col?.rows != null)
+            {
                 foreach (var go in col.rows)
-                    if (go) go.SetActive(false);
+                {
+                    if (go == null) continue;
+
+                    // If this GameObject has an "AnimObject" child, disable that child, NOT the symbol itself!
+                    Transform animChild = go.transform.Find("AnimObject");
+                    if (animChild != null)
+                    {
+                        animChild.gameObject.SetActive(false);
+                        continue;
+                    }
+
+                    // If it has SymbolButtonHandler, it's a reel symbol root - never deactivate it!
+                    if (go.GetComponent<SymbolButtonHandler>() != null)
+                    {
+                        continue;
+                    }
+
+                    go.SetActive(false);
+                }
+            }
+        }
+    }
+
+    private GameObject GetWinAnimationObject(int col, int row)
+    {
+        var rawGO = WinBox(winAnimationColumns, col, row);
+        if (rawGO == null) return null;
+
+        // If the referenced GameObject is a SlotIcon (contains AnimObject child),
+        // target its child "AnimObject" instead of the symbol itself, so the symbol never gets deactivated!
+        Transform animChild = rawGO.transform.Find("AnimObject");
+        if (animChild != null)
+        {
+            return animChild.gameObject;
+        }
+
+        if (rawGO.GetComponent<ImageAnimation>() != null)
+        {
+            return rawGO;
+        }
+
+        var childAnim = rawGO.GetComponentInChildren<ImageAnimation>(true);
+        if (childAnim != null)
+        {
+            return childAnim.gameObject;
+        }
+
+        return rawGO;
     }
 
     private static GameObject WinBox(ColumnOverlays[] cols, int col, int row)
@@ -295,7 +394,53 @@ public class SlotView : MonoBehaviour
     private void InitializeReels()
     {
         cycleDistance = symbolHeight;
-        middlePosition = 0f;
+        restingAnchoredY = 111.8f;
+        if (reelTransforms != null && reelTransforms.Length > 0)
+        {
+            reelRectTransforms = new RectTransform[reelTransforms.Length];
+            for (int i = 0; i < reelTransforms.Length; i++)
+            {
+                if (reelTransforms[i] != null)
+                {
+                    reelRectTransforms[i] = reelTransforms[i] as RectTransform;
+                }
+            }
+            if (reelRectTransforms[0] != null)
+            {
+                float sceneY = reelRectTransforms[0].anchoredPosition.y;
+                if (Mathf.Abs(sceneY) > 0.001f)
+                {
+                    restingAnchoredY = sceneY;
+                }
+            }
+        }
+
+        // Auto-guard: for a 12-image strip with Middle-Center layout, visible items are indices 5, 6, 7
+        visibleStartIndex = 5;
+
+        // Enforce safe spinLoopDistance so the 12-image strip never leaves empty gaps
+        if (spinLoopDistance > 750f || spinLoopDistance < 100f)
+        {
+            spinLoopDistance = 685f;
+        }
+
+        // Ensure all reel strip images are active from Awake
+        if (reelImagesList != null)
+        {
+            for (int col = 0; col < reelImagesList.Count; col++)
+            {
+                var reel = reelImagesList[col];
+                if (reel?.images == null) continue;
+                for (int i = 0; i < reel.images.Count; i++)
+                {
+                    if (reel.images[i] != null)
+                    {
+                        reel.images[i].gameObject.SetActive(true);
+                        reel.images[i].enabled = true;
+                    }
+                }
+            }
+        }
 
         int rowCount = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
 
@@ -387,7 +532,7 @@ public class SlotView : MonoBehaviour
         for (int row = 0; row < rowCount; row++)
         {
             int imageIndex = visibleStartIndex + row;
-            if (imageIndex < reel.images.Count)
+            if (imageIndex < reel.images.Count && reel.images[imageIndex] != null)
             {
                 int symbolId = visibleSymbolIds[row];
                 if (!baseSymbolIds.Contains(symbolId))
@@ -395,6 +540,10 @@ public class SlotView : MonoBehaviour
                     Debug.LogWarning($"[SlotView] Non-base symbol ID {symbolId} received for reel stop. Mapping to base symbol.");
                     symbolId = GetRandomBaseSymbolId();
                 }
+                reel.images[imageIndex].gameObject.SetActive(true);
+                reel.images[imageIndex].enabled = true;
+                Color c = reel.images[imageIndex].color;
+                reel.images[imageIndex].color = new Color(c.r, c.g, c.b, 1f);
                 reel.images[imageIndex].sprite = GetSymbolSprite(symbolId);
             }
         }
@@ -409,12 +558,11 @@ public class SlotView : MonoBehaviour
             reel.images[i].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
         }
 
-        if (isInitial && reelTransforms[columnIndex] != null)
+        if (isInitial && reelRectTransforms != null && columnIndex < reelRectTransforms.Length && reelRectTransforms[columnIndex] != null)
         {
-            reelTransforms[columnIndex].localPosition = new Vector3(
-                reelTransforms[columnIndex].localPosition.x,
-                middlePosition,
-                0
+            reelRectTransforms[columnIndex].anchoredPosition = new Vector2(
+                reelRectTransforms[columnIndex].anchoredPosition.x,
+                restingAnchoredY
             );
         }
     }
@@ -450,7 +598,7 @@ public class SlotView : MonoBehaviour
 
     #endregion
 
-    #region Spin Animation
+    #region Continuous Reel Spin Animation
 
     internal void StartSpin()
     {
@@ -460,111 +608,47 @@ public class SlotView : MonoBehaviour
 
         isSpinning = true;
         KillAllTweens();
-
         DisableAllOverlays();
 
-        for (int i = 0; i < reelCycleCount.Count; i++)
+        if (spinRoutine != null)
         {
-            reelCycleCount[i] = 0;
+            StopCoroutine(spinRoutine);
         }
-
-        for (int col = 0; col < 5; col++)
-        {
-            StartReelCycleWithDelay(col, col * reelStartStagger);
-        }
+        spinRoutine = StartCoroutine(StartSpinSequence());
     }
 
-    private void StartReelCycleWithDelay(int columnIndex, float delay)
+    private Coroutine spinRoutine;
+
+    private IEnumerator StartSpinSequence()
     {
-        if (columnIndex >= reelTransforms.Length) return;
-
-        Transform slotTransform = reelTransforms[columnIndex];
-
-        Sequence startSequence = DOTween.Sequence();
-
-        if (delay > 0)
+        for (int col = 0; col < reelTransforms.Length && col < 5; col++)
         {
-            startSequence.AppendInterval(delay);
-        }
-
-        startSequence.Append(
-            slotTransform.DOLocalMoveY(middlePosition + anticipationUpDistance, anticipationUpDuration)
-                .SetEase(Ease.OutQuad)
-        );
-
-        startSequence.Append(
-            slotTransform.DOLocalMoveY(middlePosition, anticipationUpDuration * 0.5f)
-                .SetEase(Ease.InQuad)
-        );
-
-        startSequence.OnComplete(() => {
-            if (isSpinning)
+            InitializeLoopingTween(col);
+            if (reelStartStagger > 0f)
             {
-                StartReelCycle(columnIndex);
+                yield return new WaitForSeconds(reelStartStagger);
             }
-        });
-
-        startSequence.Play();
-
-        if (spinTweens.Count <= columnIndex)
-            spinTweens.Add(startSequence);
-        else
-            spinTweens[columnIndex] = startSequence;
-    }
-
-    private void StartReelCycle(int columnIndex)
-    {
-        if (columnIndex >= reelTransforms.Length) return;
-        if (!isSpinning) return;
-
-        Transform slotTransform = reelTransforms[columnIndex];
-
-        slotTransform.localPosition = new Vector3(slotTransform.localPosition.x, middlePosition, 0);
-
-        float currentSpeed = spinSpeed;
-
-        float cycleDuration = symbolHeight / currentSpeed;
-
-        Sequence cycleSequence = DOTween.Sequence();
-
-        cycleSequence.Append(
-            slotTransform.DOLocalMoveY(middlePosition - symbolHeight, cycleDuration)
-                .SetEase(Ease.Linear)
-        );
-
-        cycleSequence.OnComplete(() => {
-            if (isSpinning)
-            {
-                CycleReelSymbols(columnIndex);
-
-                if (columnIndex < reelCycleCount.Count)
-                {
-                    reelCycleCount[columnIndex]++;
-                }
-
-                StartReelCycle(columnIndex);
-            }
-        });
-
-        cycleSequence.Play();
-
-        if (spinTweens.Count <= columnIndex)
-            spinTweens.Add(cycleSequence);
-        else
-            spinTweens[columnIndex] = cycleSequence;
-    }
-
-    private void CycleReelSymbols(int columnIndex)
-    {
-        var reel = reelImagesList[columnIndex];
-        if (reel.images == null || reel.images.Count == 0) return;
-
-        for (int i = reel.images.Count - 1; i > 0; i--)
-        {
-            reel.images[i].sprite = reel.images[i - 1].sprite;
         }
+    }
 
-        reel.images[0].sprite = GetSymbolSprite(GetRandomBaseSymbolId());
+    private void InitializeLoopingTween(int col)
+    {
+        if (reelRectTransforms == null || col >= reelRectTransforms.Length || reelRectTransforms[col] == null) return;
+
+        RectTransform slotRect = reelRectTransforms[col];
+        slotRect.DOKill();
+        slotRect.anchoredPosition = new Vector2(slotRect.anchoredPosition.x, restingAnchoredY);
+
+        Tweener loopTweener = slotRect.DOAnchorPosY(restingAnchoredY - spinLoopDistance, spinLoopDuration)
+            .SetLoops(-1, LoopType.Restart)
+            .SetEase(Ease.Linear);
+
+        loopTweener.Play();
+
+        if (spinTweens.Count <= col)
+            spinTweens.Add(loopTweener);
+        else
+            spinTweens[col] = loopTweener;
     }
 
     #endregion
@@ -591,125 +675,103 @@ public class SlotView : MonoBehaviour
     {
         currentDisplayMatrix = resultMatrix;
 
-        while (true)
+        if (spinRoutine != null)
         {
-            bool allReelsReady = true;
-            for (int col = 0; col < 5; col++)
-            {
-                if (reelCycleCount[col] < minSpinCyclesBeforeStop)
-                {
-                    allReelsReady = false;
-                    break;
-                }
-            }
+            StopCoroutine(spinRoutine);
+            spinRoutine = null;
+        }
 
-            if (allReelsReady) break;
-            yield return null;
+        // Ensure all reels have started their looping tween before stopping
+        for (int col = 0; col < 5; col++)
+        {
+            if (spinTweens.Count <= col || spinTweens[col] == null || !spinTweens[col].IsActive())
+            {
+                InitializeLoopingTween(col);
+            }
+        }
+
+        if (!isQuickStop && minSpinDuration > 0f)
+        {
+            yield return new WaitForSeconds(minSpinDuration);
         }
 
         float stagger = isQuickStop ? quickStopStagger : reelStopStagger;
 
         for (int col = 0; col < 5; col++)
         {
-            float delay = col * stagger;
-            StartCoroutine(StopSingleReel(col, resultMatrix[col], delay, isQuickStop));
+            StopSingleReel(col, resultMatrix[col], isQuickStop);
+            if (!isQuickStop && stagger > 0f)
+            {
+                yield return new WaitForSeconds(stagger);
+            }
         }
 
-        float longestStopTime;
-        if (isQuickStop)
-        {
-            longestStopTime = (4 * stagger) + quickStopDuration;
-        }
-        else
-        {
-            longestStopTime = (4 * stagger) + stopOvershootDuration + stopSettleDuration;
-        }
-
-        yield return new WaitForSeconds(longestStopTime);
+        float longestDuration = isQuickStop ? quickStopDuration : (stopOvershootDuration + stopSettleDuration);
+        yield return new WaitForSeconds(longestDuration);
 
         isSpinning = false;
-
         onComplete?.Invoke();
     }
 
-    private IEnumerator StopSingleReel(int columnIndex, List<int> targetSymbols, float delay, bool isQuickStop)
+    private void StopSingleReel(int columnIndex, List<int> targetSymbols, bool isQuickStop)
     {
-        if (delay > 0)
-        {
-            yield return new WaitForSeconds(delay);
-        }
-
         if (columnIndex < spinTweens.Count && spinTweens[columnIndex] != null)
         {
             spinTweens[columnIndex].Kill();
         }
 
-        Transform slotTransform = reelTransforms[columnIndex];
+        if (reelRectTransforms == null || columnIndex >= reelRectTransforms.Length) return;
+        RectTransform slotRect = reelRectTransforms[columnIndex];
+        if (slotRect == null) return;
 
+        slotRect.DOKill();
+
+        // 1. Silently update visible target symbols on the reel strip
         SetReelSymbols(columnIndex, targetSymbols, false);
 
-        float currentY = slotTransform.localPosition.y;
-        float targetY = middlePosition;
-        float offset = (currentY - targetY) % cycleDistance;
-        if (offset < 0) offset += cycleDistance;
-
-        slotTransform.localPosition = new Vector3(
-            slotTransform.localPosition.x,
-            targetY + offset,
-            0
-        );
-
-        // ── Play reel-stop sound immediately when symbols lock in ──────────
+        // 2. Play reel-stop audio
         AudioManager.Instance?.PlayReelStop();
 
-        // Detect wild symbols in this column for hit sounds
-        if (currentDisplayMatrix != null && columnIndex < currentDisplayMatrix.Count)
-        {
-            bool hasWild = false;
-            int wildId = gameManager?.gameConfig != null ? gameManager.gameConfig.wildSymbolId : 10;
-            foreach (int sym in currentDisplayMatrix[columnIndex])
-            {
-                if (sym == wildId) hasWild = true;
-            }
-            if (hasWild) AudioManager.Instance?.PlayReelStop();
-        }
-        // ──────────────────────────────────────────────────────────────────
-
+        // 3. Elastic settling stop
         if (isQuickStop)
         {
             Sequence quickStopSequence = DOTween.Sequence();
-
+            slotRect.anchoredPosition = new Vector2(slotRect.anchoredPosition.x, restingAnchoredY);
             quickStopSequence.Append(
-                slotTransform.DOLocalMoveY(middlePosition - quickStopOvershoot, quickStopDuration * 0.3f)
+                slotRect.DOAnchorPosY(restingAnchoredY - quickStopOvershoot, quickStopDuration * 0.3f)
                     .SetEase(Ease.OutQuad)
             );
-
             quickStopSequence.Append(
-                slotTransform.DOLocalMoveY(middlePosition, quickStopDuration * 0.7f)
+                slotRect.DOAnchorPosY(restingAnchoredY, quickStopDuration * 0.7f)
                     .SetEase(Ease.InOutQuad)
             );
-
             quickStopSequence.OnComplete(() => PlayStopAnimationsForColumn(columnIndex));
+            quickStopSequence.Play();
 
-            spinTweens[columnIndex] = quickStopSequence;
+            if (spinTweens.Count <= columnIndex)
+                spinTweens.Add(quickStopSequence);
+            else
+                spinTweens[columnIndex] = quickStopSequence;
         }
         else
         {
             Sequence stopSequence = DOTween.Sequence();
-
+            slotRect.anchoredPosition = new Vector2(slotRect.anchoredPosition.x, restingAnchoredY);
             stopSequence.Append(
-                slotTransform.DOLocalMoveY(middlePosition - stopOvershootDistance, stopOvershootDuration)
+                slotRect.DOAnchorPosY(restingAnchoredY - stopOvershootDistance, stopOvershootDuration)
                     .SetEase(Ease.OutQuad)
             );
-
             stopSequence.Append(
-                slotTransform.DOLocalMoveY(middlePosition, stopSettleDuration)
-                    .SetEase(Ease.InOutQuad)
+                slotRect.DOAnchorPosY(restingAnchoredY, stopSettleDuration)
+                    .SetEase(Ease.OutBack)
             );
-
             stopSequence.OnComplete(() => PlayStopAnimationsForColumn(columnIndex));
+            stopSequence.Play();
 
-            spinTweens[columnIndex] = stopSequence;
+            if (spinTweens.Count <= columnIndex)
+                spinTweens.Add(stopSequence);
+            else
+                spinTweens[columnIndex] = stopSequence;
         }
     }
 
@@ -729,9 +791,16 @@ public class SlotView : MonoBehaviour
                     SetReelSymbols(col, resultMatrix[col], false);
                     reelTransforms[col].localPosition = new Vector3(
                         reelTransforms[col].localPosition.x,
-                        middlePosition,
+                        // middlePosition,
                         0
                     );
+                    if (reelRectTransforms != null && col < reelRectTransforms.Length && reelRectTransforms[col] != null)
+                    {
+                        reelRectTransforms[col].anchoredPosition = new Vector2(
+                            reelRectTransforms[col].anchoredPosition.x,
+                            restingAnchoredY
+                        );
+                    }
                     PlayStopAnimationsForColumn(col);
                 }
             }
@@ -810,7 +879,7 @@ public class SlotView : MonoBehaviour
                 {
                     EnableWinBox(col, row);
                     
-                    var animGO = WinBox(winAnimationColumns, col, row);
+                    var animGO = GetWinAnimationObject(col, row);
                     if (animGO != null)
                     {
                         ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
@@ -844,7 +913,10 @@ public class SlotView : MonoBehaviour
                                 {
                                     imageAnim.onLoopComplete = null;
                                     imageAnim.StopAnimation();
-                                    animGO.SetActive(false);
+                                    if (animGO != null && animGO.GetComponent<SymbolButtonHandler>() == null)
+                                    {
+                                        animGO.SetActive(false);
+                                    }
 
                                     if (symbolImage != null)
                                     {
@@ -898,7 +970,7 @@ public class SlotView : MonoBehaviour
         Image symbolImage = GetVisibleImage(column, row);
         if (symbolImage == null) return;
 
-        var animGO = WinBox(winAnimationColumns, column, row);
+        var animGO = GetWinAnimationObject(column, row);
         if (animGO == null) return;
 
         ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
@@ -944,7 +1016,10 @@ public class SlotView : MonoBehaviour
             }
 
             if (imageAnim != null) imageAnim.StopAnimation();
-            if (animGO != null) animGO.SetActive(false);
+            if (animGO != null && animGO.GetComponent<SymbolButtonHandler>() == null)
+            {
+                animGO.SetActive(false);
+            }
 
             if (symbolImage != null)
             {
@@ -1082,7 +1157,7 @@ public class SlotView : MonoBehaviour
             Image symbolImage = GetVisibleImage(col, row);
             if (symbolImage == null) continue;
 
-            var animGO = WinBox(winAnimationColumns, col, row);
+            var animGO = GetWinAnimationObject(col, row);
             if (animGO == null) continue;
 
             ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
@@ -1118,7 +1193,10 @@ public class SlotView : MonoBehaviour
                 {
                     imageAnim.onLoopComplete = null;
                     imageAnim.StopAnimation();
-                    if (animGO != null) animGO.SetActive(false);
+                    if (animGO != null && animGO.GetComponent<SymbolButtonHandler>() == null)
+                    {
+                        animGO.SetActive(false);
+                    }
 
                     if (symbolImage != null)
                     {
@@ -1259,7 +1337,7 @@ public class SlotView : MonoBehaviour
         }
 
         // Also ensure the corresponding animation object is disabled
-        var animGO = WinBox(winAnimationColumns, col, row);
+        var animGO = GetWinAnimationObject(col, row);
         if (animGO != null)
         {
             ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
@@ -1268,7 +1346,10 @@ public class SlotView : MonoBehaviour
                 if (imageAnim.rendererDelegate != null) imageAnim.rendererDelegate.DOKill();
                 imageAnim.StopAnimation();
             }
-            animGO.SetActive(false);
+            if (animGO.GetComponent<SymbolButtonHandler>() == null)
+            {
+                animGO.SetActive(false);
+            }
         }
     }
 
@@ -1285,7 +1366,7 @@ public class SlotView : MonoBehaviour
 
 
         // Get the animation GameObject for this position
-        var animGO = WinBox(winAnimationColumns, column, row);
+        var animGO = GetWinAnimationObject(column, row);
         if (animGO == null)
         {
             Debug.LogError($"[AnimateWinSymbol] Animation GameObject is NULL at col: {column}, row: {row}");
@@ -1367,7 +1448,10 @@ public class SlotView : MonoBehaviour
             }
 
             if (imageAnim != null) imageAnim.StopAnimation();
-            if (animGO != null) animGO.SetActive(false);
+            if (animGO != null && animGO.GetComponent<SymbolButtonHandler>() == null)
+            {
+                animGO.SetActive(false);
+            }
 
             if (symbolImage != null)
             {
@@ -1396,12 +1480,13 @@ public class SlotView : MonoBehaviour
         // Stop all win animations and disable animation GameObjects
         if (winAnimationColumns != null)
         {
-            foreach (var col in winAnimationColumns)
+            for (int col = 0; col < winAnimationColumns.Length; col++)
             {
-                if (col?.rows != null)
+                if (winAnimationColumns[col]?.rows != null)
                 {
-                    foreach (var animGO in col.rows)
+                    for (int row = 0; row < winAnimationColumns[col].rows.Length; row++)
                     {
+                        GameObject animGO = GetWinAnimationObject(col, row);
                         if (animGO != null)
                         {
                             ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
@@ -1416,7 +1501,8 @@ public class SlotView : MonoBehaviour
                                 }
                                 imageAnim.StopAnimation();
                             }
-                            if (animGO.activeSelf)
+                            // Never disable a reel symbol root!
+                            if (animGO.GetComponent<SymbolButtonHandler>() == null && animGO.activeSelf)
                             {
                                 animGO.SetActive(false);
                             }
@@ -1430,7 +1516,7 @@ public class SlotView : MonoBehaviour
         HideAllWinLineTexts();
         HidePhase1TotalWinText();
 
-        // Restore all symbol image alphas to full opacity
+        // Restore all symbol image alphas to full opacity and ensure active
         foreach (var reel in reelImagesList)
         {
             if (reel.images != null)
@@ -1439,6 +1525,8 @@ public class SlotView : MonoBehaviour
                 {
                     if (image != null)
                     {
+                        image.gameObject.SetActive(true);
+                        image.enabled = true;
                         image.DOKill();
                         image.transform.localScale = Vector3.one;
                         Color c = image.color;
@@ -1464,8 +1552,14 @@ public class SlotView : MonoBehaviour
     }
 
 
-    private void KillAllTweens()
+    internal void KillAllTweens()
     {
+        if (spinRoutine != null)
+        {
+            StopCoroutine(spinRoutine);
+            spinRoutine = null;
+        }
+
         foreach (var tween in spinTweens)
         {
             tween?.Kill();
@@ -1473,6 +1567,18 @@ public class SlotView : MonoBehaviour
         spinTweens.Clear();
 
         KillWinTweens();
+
+        if (reelRectTransforms != null)
+        {
+            for (int i = 0; i < reelRectTransforms.Length; i++)
+            {
+                if (reelRectTransforms[i] != null)
+                {
+                    reelRectTransforms[i].DOKill();
+                    reelRectTransforms[i].anchoredPosition = new Vector2(reelRectTransforms[i].anchoredPosition.x, restingAnchoredY);
+                }
+            }
+        }
     }
 
     #region Cleanup

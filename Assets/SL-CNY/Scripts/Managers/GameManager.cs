@@ -238,8 +238,23 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
+        float waitTimeout = 30f;
+        float waitElapsed = 0f;
         while (lastResult == null)
         {
+            waitElapsed += Time.deltaTime;
+            if (waitElapsed > waitTimeout)
+            {
+                Debug.LogError("[GameManager] Spin result timeout (30s) — aborting spin.");
+                if (popupManager != null)
+                {
+                    popupManager.ShowServerError("Spin timed out. Please check your connection.");
+                }
+                currentState = GameState.Idle;
+                uiManager?.OnSpinCompleted();
+                slotView?.KillAllTweens();
+                yield break;
+            }
             yield return null;
         }
 
