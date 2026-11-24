@@ -139,28 +139,37 @@ public class SymbolInfoCard : MonoBehaviour
 
         string symbolNameLower = symbolInfo != null ? (symbolInfo.name ?? "").ToLower() : "";
 
-        // Check if special symbol: Wild (ID 10), USpin (ID 11), MoneyBag (ID 12)
-        bool isWild = (symbolId == 10) || (symbolInfo != null && symbolInfo.isWild) || symbolNameLower.Contains("wild");
-        bool isUSpin = (symbolId == 11) || symbolNameLower.Contains("uspin");
-        bool isMoneyBag = (symbolId == 12) || symbolNameLower.Contains("moneybag") || symbolNameLower.Contains("money bag");
+        // Check if special symbol: Wild (ID 1 Gold Coin, ID 16 Wild Yin Yang, ID 17 Wild Strawberry)
+        // Note: ID 10 is Green Gem (regular base symbol) and is NOT wild.
+        bool isWild = (symbolId == 1 || symbolId == 16 || symbolId == 17) ||
+                      (symbolInfo != null && symbolInfo.isWild) ||
+                      (symbolNameLower.Contains("wild") && symbolId != 10);
 
-        if (isWild || isUSpin || isMoneyBag)
+        // Scatter: ID 11 (Red Strawberry) or ID 15 (Yin Yang)
+        bool isScatter = (symbolId == 11 || symbolId == 15) ||
+                         (symbolInfo != null && symbolInfo.isScatter) ||
+                         symbolNameLower.Contains("scatter");
+
+        // Feature / Bonus: ID 12 (Gold Strawberry) or ID 14 (Gold Berries)
+        bool isBonus = (symbolId == 12 || symbolId == 14) || symbolNameLower.Contains("bonus");
+
+        if (isWild || isScatter || isBonus)
         {
             // SPECIAL SYMBOL: Text alignment CENTER
             infoText.alignment = TextAlignmentOptions.Center;
             infoText.enableWordWrapping = true;
-if (isUSpin)
-{
-    infoText.text = "3 U-Spin symbols trigger the Wheel Bonus feature.";
-}
-else if (isMoneyBag)
-{
-    infoText.text = "3 Money Bag symbols trigger the Money Bag Collect feature.";
-}
-else if (isWild)
-{
-    infoText.text = "Substitutes for all symbols except U-Spin and Money Bag.";
-}
+            if (isScatter)
+            {
+                infoText.text = "3 or more Scatter symbols trigger the Free Spins feature.";
+            }
+            else if (isBonus)
+            {
+                infoText.text = "Bonus symbols trigger the special feature.";
+            }
+            else if (isWild)
+            {
+                infoText.text = "Substitutes for all symbols except Scatter.";
+            }
         }
         else
         {

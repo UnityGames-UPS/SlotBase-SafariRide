@@ -49,6 +49,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip clipWheelSegmentTick;
     [SerializeField] private AudioClip clipWinLinePhase1Start;
     [SerializeField] private AudioClip clipReelStop;
+    [SerializeField] private AudioClip clipAnticipation;
+    [SerializeField] private AudioClip clipFlowerOpen;
 
     private bool _musicEnabled = true;
     private bool _sfxEnabled   = true;
@@ -298,6 +300,20 @@ public class AudioManager : MonoBehaviour
             wheelSegmentSource.PlayOneShot(clipReelStop);
         else
             PlayUISound(clipReelStop);
+    }
+
+    // 15. Anticipation Tension Sound
+    internal void PlayAnticipation()
+    {
+        if (!_sfxEnabled || clipAnticipation == null) return;
+        PlayUISound(clipAnticipation);
+    }
+
+    // 16. Flower Open Sound
+    internal void PlayFlowerOpen()
+    {
+        if (!_sfxEnabled || clipFlowerOpen == null) return;
+        PlayUISound(clipFlowerOpen);
     }
 
     private bool isForceMuted = false;

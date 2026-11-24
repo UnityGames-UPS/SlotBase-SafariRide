@@ -241,6 +241,8 @@ public class ServerPayload
     public double netReturnRatio;
     public List<ServerWaysWin> waysWins;
     public List<ServerLineWin> lineWins;
+    [JsonProperty("wins")] public List<ServerLineWin> wins;
+    [JsonProperty("linesWon")] public List<ServerLineWin> linesWon;
     public ServerWildCoinMysteryResult wildCoinMystery;
     public ServerUSpinResult uSpin;
     public ServerMoneyBagResult moneyBag;
@@ -251,11 +253,15 @@ public class ServerPayload
 public class ServerLineWin
 {
     public int lineIndex;
+    public int line;
     public List<ServerPosition> matchedPositions;
     public List<int> symbolIds;
+    public List<int> symbols;
     public double basePayout;
     public double winInCredits;
     public double winInCash;
+    public double win;
+    public double winAmount;
     public string winType;
     public int matchLength;
 }
@@ -390,11 +396,11 @@ public class GameConfig
     public List<double> availableBets;
     public List<SymbolInfo> symbols;
 
-    // Wild configuration
-    public int wildSymbolId = 10;      // Base wild (10)
+    // Wild configuration (IDs 1 Gold Coin, 16 Wild Yin Yang, 17 Wild Strawberry are Wild; ID 10 is Green Gem base symbol)
+    public int wildSymbolId = 1;
 
-    // Scatter configuration
-    public int scatterSymbolId = 11;   // USpin is ID 11
+    // Scatter configuration (ID 11 Red Strawberry, ID 15 Yin Yang)
+    public int scatterSymbolId = 11;
 
     public int betMultiplier = 1;      // CNY is cash-bet based, multiplier default is 1
     public double creditDivisor = 25;  // Credit divisor sent in initData
@@ -656,7 +662,9 @@ public static class InitDataConverter
     /// </summary>
     internal static SpinResult ConvertServerResponseToSpinResult(ServerSpinResponse serverResponse, double currentBalance, double betAmount, GameConfig gameConfig)
     {
-        double winAmount = serverResponse.payload.winAmount;
+        double winAmount = serverResponse.payload.winAmount > 0 
+            ? serverResponse.payload.winAmount 
+            : (serverResponse.payload.totalWin > 0 ? serverResponse.payload.totalWin : serverResponse.payload.grandTotalWin);
         double totalBetAmount = serverResponse.payload.totalBetAmount;
 
         double newBalance = serverResponse.player?.balance ??
@@ -690,7 +698,7 @@ public static class InitDataConverter
             winAmount = winAmount,
             grandTotalWin = serverResponse.payload.grandTotalWin,
 
-            winLines = ConvertWinningLines(serverResponse.payload.lineWins),
+            winLines = ConvertWinningLines(serverResponse.payload.lineWins ?? serverResponse.payload.wins ?? serverResponse.payload.linesWon, serverResponse.payload.waysWins, gameConfig),
 
             playerData = new PlayerData
             {
@@ -743,7 +751,7 @@ public static class InitDataConverter
             resultMatrix = ConvertReelsToMatrix(serverResponse.payload.reels, serverResponse.matrix, gameConfig),
             winAmount = winAmountVal,
             grandTotalWin = grandTotalWinVal,
-            winLines = ConvertWinningLines(serverResponse.payload.lineWins),
+            winLines = ConvertWinningLines(serverResponse.payload.lineWins ?? serverResponse.payload.wins ?? serverResponse.payload.linesWon, serverResponse.payload.waysWins, gameConfig),
 
             playerData = new PlayerData
             {
@@ -890,30 +898,69 @@ public static class InitDataConverter
         return matrix;
     }
 
-    private static List<WinLine> ConvertWinningLines(List<ServerLineWin> serverLineWins)
+    private static List<WinLine> ConvertWinningLines(List<ServerLineWin> serverLineWins, List<ServerWaysWin> serverWaysWins, GameConfig gameConfig)
     {
         var winLines = new List<WinLine>();
-        if (serverLineWins == null) return winLines;
 
-        foreach (var serverWin in serverLineWins)
+        if (serverLineWins != null)
         {
-            var flatPositions = new List<int>();
-            if (serverWin.matchedPositions != null)
+            foreach (var serverWin in serverLineWins)
             {
-                foreach (var pos in serverWin.matchedPositions)
+                var flatPositions = new List<int>();
+                if (serverWin.matchedPositions != null && serverWin.matchedPositions.Count > 0)
                 {
-                    int flatIndex = pos.row * 5 + pos.col;
-                    flatPositions.Add(flatIndex);
+                    foreach (var pos in serverWin.matchedPositions)
+                    {
+                        flatPositions.Add(pos.row * 5 + pos.col);
+                    }
                 }
-            }
+                else if (gameConfig != null && gameConfig.paylines != null && serverWin.lineIndex >= 0 && serverWin.lineIndex < gameConfig.paylines.Count)
+                {
+                    var lineCoords = gameConfig.paylines[serverWin.lineIndex];
+                    int matchCount = serverWin.matchLength > 0 ? serverWin.matchLength : (serverWin.symbolIds != null ? serverWin.symbolIds.Count : (lineCoords != null ? lineCoords.Count : 0));
+                    for (int c = 0; c < matchCount && c < lineCoords.Count; c++)
+                    {
+                        int r = lineCoords[c];
+                        flatPositions.Add(r * 5 + c);
+                    }
+                }
 
-            winLines.Add(new WinLine
+                int lineId = serverWin.lineIndex >= 0 ? serverWin.lineIndex : serverWin.line;
+                double winCash = serverWin.winInCash > 0 ? serverWin.winInCash : (serverWin.win > 0 ? serverWin.win : serverWin.winAmount);
+                var syms = serverWin.symbolIds ?? serverWin.symbols;
+
+                winLines.Add(new WinLine
+                {
+                    lineId = lineId,
+                    symbolIds = syms,
+                    positions = flatPositions,
+                    winAmount = winCash
+                });
+            }
+        }
+
+        if (serverWaysWins != null)
+        {
+            int index = winLines.Count;
+            foreach (var waysWin in serverWaysWins)
             {
-                lineId = serverWin.lineIndex,
-                symbolIds = serverWin.symbolIds,
-                positions = flatPositions,
-                winAmount = serverWin.winInCash
-            });
+                var flatPositions = new List<int>();
+                if (waysWin.matchedPositions != null)
+                {
+                    foreach (var pos in waysWin.matchedPositions)
+                    {
+                        flatPositions.Add(pos.row * 5 + pos.col);
+                    }
+                }
+
+                winLines.Add(new WinLine
+                {
+                    lineId = index++,
+                    symbolIds = new List<int> { waysWin.symbolId },
+                    positions = flatPositions,
+                    winAmount = waysWin.winInCash
+                });
+            }
         }
 
         return winLines;

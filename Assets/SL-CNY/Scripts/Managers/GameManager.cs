@@ -297,8 +297,17 @@ public class GameManager : MonoBehaviour
             };
         }
 
-        if (lastResult != null && lastResult.winAmount > 0 && lastResult.winLines != null && lastResult.winLines.Count > 0)
+        if (lastResult != null && lastResult.winAmount > 0)
         {
+            // Ensure winLines is non-null for presentation
+            if (lastResult.winLines == null || lastResult.winLines.Count == 0)
+            {
+                lastResult.winLines = new List<WinLine>
+                {
+                    new WinLine { winAmount = lastResult.winAmount }
+                };
+            }
+
             double totalPay = GetTotalPay();
             double multiplier = totalPay > 0 ? (lastResult.winAmount / totalPay) : 0;
 
@@ -811,14 +820,14 @@ public class GameManager : MonoBehaviour
     {
         if (matrix == null) return false;
 
-        int scatterId = gameConfig != null ? gameConfig.scatterSymbolId : 12;
+        int scatterId = gameConfig != null ? gameConfig.scatterSymbolId : 11;
 
         foreach (var col in matrix)
         {
             if (col == null) continue;
             foreach (int sym in col)
             {
-                if (sym == scatterId) return true;
+                if (sym == 11 || sym == 15 || sym == scatterId) return true;
             }
         }
 

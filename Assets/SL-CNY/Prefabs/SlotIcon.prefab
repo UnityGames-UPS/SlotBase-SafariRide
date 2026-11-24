@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 4446001048572404203}
   - component: {fileID: 394143487140401096}
   - component: {fileID: 7705272391089252261}
+  - component: {fileID: 1447242259619553536}
   m_Layer: 5
   m_Name: AnimObject
   m_TagString: Untagged
@@ -263,7 +264,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 214}
+  m_SizeDelta: {x: 248, y: 238}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4446001048572404203
 CanvasRenderer:
@@ -293,7 +294,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9b9665d9fa60b4659a61d05b9dbe25e9, type: 3}
+  m_Sprite: {fileID: 5188816768652797363, guid: afaeda2a968f5da4cbb9b9896556addb, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -315,7 +316,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray: []
+  textureArray:
+  - {fileID: 5188816768652797363, guid: afaeda2a968f5da4cbb9b9896556addb, type: 3}
+  - {fileID: -5106942997370837407, guid: d01c55df64e3d7e47ade7e8ccec3c459, type: 3}
+  - {fileID: -2226861800479947272, guid: aa460310620dfd344a6abe1f916e2543, type: 3}
+  - {fileID: -6174828616924084205, guid: 731d8f41de121134caf6e1935d8bd936, type: 3}
+  - {fileID: 6906241873164915325, guid: e328df72572b6074b974a680e83e0d3b, type: 3}
+  - {fileID: -1591309371349841305, guid: e208391f0a7621a4997dd6122043fc0d, type: 3}
+  - {fileID: 4582099273402651035, guid: 1c6002ba5d706c44e93f48977ee34cc5, type: 3}
+  - {fileID: -3885853725782290688, guid: 4943d8303bb7e89408fa739a36084930, type: 3}
+  - {fileID: -4860139794268634463, guid: bdbc936658119594790680534719f949, type: 3}
+  - {fileID: -7636972375607459536, guid: 28494cd39fda63f4dbecf61f20fab945, type: 3}
+  - {fileID: 7499116105838826303, guid: 161ae4e147d1d804289a3cb26f82c591, type: 3}
+  - {fileID: -8182629786840882792, guid: 05d1ed081c9ae5645b4d4bc499e53144, type: 3}
+  - {fileID: -8659389623134192805, guid: f478b2a21ec9d6b4cbc365c9428f543d, type: 3}
+  - {fileID: 4854189585825001740, guid: 766512b140f075b478ac651b41f080e2, type: 3}
+  - {fileID: 3063001408174326474, guid: 25389e8c25e91e94dac64385c5272c11, type: 3}
+  - {fileID: -6294568173945084771, guid: 84548c7b3153fdd45bd59e3472b0fa93, type: 3}
+  - {fileID: -2282289009311734536, guid: 8c56c9cd7716ee5439da3b83dd7595d3, type: 3}
+  - {fileID: 6711151606588607228, guid: 73e9446c9aa3556468c4c84170ebd40e, type: 3}
+  - {fileID: 764590848473778365, guid: 6de42fab26626604aac990f46530aee2, type: 3}
+  - {fileID: -3600733240366667598, guid: 6ddf3dc1ab7d7f34d87da78e2e9e81d3, type: 3}
+  - {fileID: -2255093339880523033, guid: dd831fcdc799a864d99439d4e9de773e, type: 3}
+  - {fileID: -6842846454521670019, guid: 6865b9c8305bd0a4689b7d7b1d95dcd9, type: 3}
+  - {fileID: 2779985730013915162, guid: 8c284908a788cb641b4fcda54adbf6a5, type: 3}
+  - {fileID: 3238265247601586511, guid: 550ba56bf20f0d04f82edc03cfba6f32, type: 3}
+  - {fileID: -3403572336711031982, guid: 1b4847c278ab5e440ac05be6fecec015, type: 3}
+  - {fileID: -5476111880709038843, guid: b5039eceae72c414c952524b450997af, type: 3}
+  - {fileID: -76240979605119195, guid: 36d19c4ec25876f4f909079773c1d89e, type: 3}
+  - {fileID: 121350314695320523, guid: dbd8adf6680101f45a1723a6cb934a80, type: 3}
+  - {fileID: 4293568455756147937, guid: eab406493f1dd81428fba441cf6a35dc, type: 3}
+  - {fileID: -2384418589542599050, guid: 35e06e050e784254f96d7e9f4d4b444d, type: 3}
+  - {fileID: -8335081446578652319, guid: f5ec1021ec30bb442a2784a7a0ac5095, type: 3}
   rendererDelegate: {fileID: 394143487140401096}
   useSharedMaterial: 1
   doLoopAnimation: 1
@@ -324,3 +356,26 @@ MonoBehaviour:
   currentAnimationState: 0
   AnimationSpeed: 70
   delayBetweenLoop: 0
+--- !u!223 &1447242259619553536
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9035092750369591713}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: -1
+  m_TargetDisplay: 0

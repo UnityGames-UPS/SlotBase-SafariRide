@@ -96,6 +96,14 @@ public class SlotView : MonoBehaviour
     [SerializeField] private float quickStopDuration = 0.2f;
     [SerializeField] private int minSpinCyclesBeforeStop = 3;
 
+    [Header("Reel Anticipation & Flower Settings")]
+    [Tooltip("Extra spin duration in seconds when a reel is anticipating a feature trigger")]
+    [SerializeField] private float anticipationDuration = 1.5f;
+    [SerializeField] private GameObject flowerCol3;
+    [SerializeField] private GameObject flowerCol4;
+    [SerializeField] private Sprite flowerClosedSprite;
+    [SerializeField] private Sprite flowerOpenSprite;
+
 
     [Header("Win Animation Settings")]
     [SerializeField] private float winAnimationDuration = 3.0f; // Total duration each win symbol animation plays
@@ -113,6 +121,9 @@ public class SlotView : MonoBehaviour
     [Header("Win Animation Objects — Col 0..4  (each has 3 rows, contains ImageAnimation component)")]
     [Tooltip("GameObject references for win animations. Each should have an ImageAnimation component attached.")]
     [SerializeField] private ColumnOverlays[] winAnimationColumns = new ColumnOverlays[5];
+
+    [Header("Safari Ride Win Highlight Frame Animation (31 frames from Frame_Animation)")]
+    [SerializeField] private List<Sprite> highlightFrameSprites = new List<Sprite>();
 
 
     [Header("Symbol Info Card")]
@@ -147,9 +158,30 @@ public class SlotView : MonoBehaviour
         {
             BuildSymbolSpriteArray();
         }
+
+        // Auto-populate highlight frame sprites if empty (Editor or runtime fallback)
+        if (highlightFrameSprites == null || highlightFrameSprites.Count == 0)
+        {
+            var loadedSprites = Resources.FindObjectsOfTypeAll<Sprite>();
+            if (loadedSprites != null && loadedSprites.Length > 0)
+            {
+                var frameList = new List<Sprite>();
+                foreach (var s in loadedSprites)
+                {
+                    if (s != null && s.name.StartsWith("Frame_Animation"))
+                    {
+                        frameList.Add(s);
+                    }
+                }
+                frameList.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+                highlightFrameSprites = frameList;
+            }
+        }
+
         DisableAllOverlays();
         SanitizeAllReelStripImages();
         SetupSymbolButtons();
+        ResetFlowers();
 
         // Ensure every symbol on every reel strip is active, enabled, and fully opaque
         if (reelImagesList != null)
@@ -221,10 +253,71 @@ public class SlotView : MonoBehaviour
 
     private void DisableAllOverlays()
     {
-        DisableColumns(winBoxColumns);
-        DisableColumns(winAnimationColumns);
+        DisableAllHighlightFrames();
+        HideAllWinLineTexts();
         HidePhase1TotalWinText();
         if (symbolInfoCard) symbolInfoCard.HideCard();
+
+        // Safety: ensure every symbol on every reel strip is active, enabled, and fully opaque
+        if (reelImagesList != null)
+        {
+            foreach (var reel in reelImagesList)
+            {
+                if (reel?.images != null)
+                {
+                    foreach (var image in reel.images)
+                    {
+                        if (image != null)
+                        {
+                            image.gameObject.SetActive(true);
+                            image.enabled = true;
+                            image.DOKill();
+                            image.transform.DOKill();
+                            image.transform.localScale = Vector3.one;
+                            Color c = image.color;
+                            image.color = new Color(c.r, c.g, c.b, 1f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void DisableAllHighlightFrames()
+    {
+        if (reelImagesList != null)
+        {
+            foreach (var reel in reelImagesList)
+            {
+                if (reel?.images != null)
+                {
+                    foreach (var image in reel.images)
+                    {
+                        if (image != null)
+                        {
+                            Canvas iconCanvas = image.GetComponent<Canvas>();
+                            if (iconCanvas != null)
+                            {
+                                iconCanvas.overrideSorting = false;
+                            }
+
+                            Transform animChild = image.transform.Find("AnimObject");
+                            if (animChild == null)
+                            {
+                                var imgAnim = image.GetComponentInChildren<ImageAnimation>(true);
+                                if (imgAnim != null) animChild = imgAnim.transform;
+                            }
+                            if (animChild != null)
+                            {
+                                ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
+                                if (frameAnim != null) frameAnim.StopAnimation();
+                                animChild.gameObject.SetActive(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void SetupSymbolButtons()
@@ -288,33 +381,7 @@ public class SlotView : MonoBehaviour
 
     private static void DisableColumns(ColumnOverlays[] cols)
     {
-        if (cols == null) return;
-        foreach (var col in cols)
-        {
-            if (col?.rows != null)
-            {
-                foreach (var go in col.rows)
-                {
-                    if (go == null) continue;
-
-                    // If this GameObject has an "AnimObject" child, disable that child, NOT the symbol itself!
-                    Transform animChild = go.transform.Find("AnimObject");
-                    if (animChild != null)
-                    {
-                        animChild.gameObject.SetActive(false);
-                        continue;
-                    }
-
-                    // If it has SymbolButtonHandler, it's a reel symbol root - never deactivate it!
-                    if (go.GetComponent<SymbolButtonHandler>() != null)
-                    {
-                        continue;
-                    }
-
-                    go.SetActive(false);
-                }
-            }
-        }
+        // Safe no-op: never deactivate reel symbol GameObjects!
     }
 
     private GameObject GetWinAnimationObject(int col, int row)
@@ -609,6 +676,7 @@ public class SlotView : MonoBehaviour
         isSpinning = true;
         KillAllTweens();
         DisableAllOverlays();
+        ResetFlowers();
 
         if (spinRoutine != null)
         {
@@ -664,6 +732,7 @@ public class SlotView : MonoBehaviour
             {
                 SetReelSymbols(col, resultMatrix[col], false);
             }
+            ResetFlowers();
             onComplete?.Invoke();
             return;
         }
@@ -696,10 +765,36 @@ public class SlotView : MonoBehaviour
         }
 
         float stagger = isQuickStop ? quickStopStagger : reelStopStagger;
+        int strawberryCount = 0;
+        int blueberryCount = 0;
 
         for (int col = 0; col < 5; col++)
         {
+            // Anticipation check on reels 3 and 4 (the 4th and 5th reels)
+            // Only trigger tease if at least 2 reels have landed Strawberries OR at least 2 reels have landed Blueberries!
+            bool shouldTease = (col == 3 || col == 4) && (strawberryCount >= 2 || blueberryCount >= 2);
+            if (!isQuickStop && shouldTease)
+            {
+                TriggerAnticipation(col);
+                yield return new WaitForSeconds(anticipationDuration);
+            }
+
             StopSingleReel(col, resultMatrix[col], isQuickStop);
+
+            // Count landed feature scatters on this reel (strawberry and blueberry)
+            if (resultMatrix != null && col < resultMatrix.Count && resultMatrix[col] != null)
+            {
+                bool hasStrawberry = false;
+                bool hasBlueberry = false;
+                foreach (int symId in resultMatrix[col])
+                {
+                    if (IsStrawberrySymbol(symId)) hasStrawberry = true;
+                    if (IsBlueberrySymbol(symId)) hasBlueberry = true;
+                }
+                if (hasStrawberry) strawberryCount++;
+                if (hasBlueberry) blueberryCount++;
+            }
+
             if (!isQuickStop && stagger > 0f)
             {
                 yield return new WaitForSeconds(stagger);
@@ -708,6 +803,9 @@ public class SlotView : MonoBehaviour
 
         float longestDuration = isQuickStop ? quickStopDuration : (stopOvershootDuration + stopSettleDuration);
         yield return new WaitForSeconds(longestDuration);
+
+        // All reels have finished spinning and final result is now displayed -> stop flower tease animations
+        ResetFlowers();
 
         isSpinning = false;
         onComplete?.Invoke();
@@ -775,6 +873,76 @@ public class SlotView : MonoBehaviour
         }
     }
 
+    private void TriggerAnticipation(int col)
+    {
+        AudioManager.Instance?.PlayAnticipation();
+        AudioManager.Instance?.PlayFlowerOpen();
+
+        if (col == 3)
+        {
+            AnimateFlowerOpen(flowerCol3);
+        }
+        else if (col == 4)
+        {
+            AnimateFlowerOpen(flowerCol4);
+        }
+    }
+
+    private void AnimateFlowerOpen(GameObject flowerGO)
+    {
+        if (flowerGO == null) return;
+        flowerGO.SetActive(true);
+
+        Image img = flowerGO.GetComponent<Image>();
+        if (img != null && flowerOpenSprite != null)
+        {
+            img.sprite = flowerOpenSprite;
+        }
+
+        ImageAnimation anim = flowerGO.GetComponent<ImageAnimation>();
+        if (anim != null)
+        {
+            anim.StartAnimation();
+        }
+        else
+        {
+            flowerGO.transform.DOKill();
+            flowerGO.transform.localScale = Vector3.one * 0.8f;
+            flowerGO.transform.DOScale(1.25f, 0.25f).SetLoops(2, LoopType.Yoyo).OnComplete(() =>
+            {
+                flowerGO.transform.localScale = Vector3.one;
+            });
+        }
+    }
+
+    private void ResetFlowers()
+    {
+        ResetSingleFlower(flowerCol3);
+        ResetSingleFlower(flowerCol4);
+    }
+
+    private void ResetSingleFlower(GameObject flowerGO)
+    {
+        if (flowerGO == null) return;
+        ImageAnimation anim = flowerGO.GetComponent<ImageAnimation>();
+        if (anim != null)
+        {
+            anim.StopAnimation();
+            anim.CancelInvoke();
+        }
+        Image img = flowerGO.GetComponent<Image>();
+        if (img != null && flowerClosedSprite != null)
+        {
+            img.sprite = flowerClosedSprite;
+        }
+        else if (flowerClosedSprite == null)
+        {
+            flowerGO.SetActive(false);
+        }
+        flowerGO.transform.DOKill();
+        flowerGO.transform.localScale = Vector3.one;
+    }
+
     #endregion
 
     #region Quick Spin
@@ -805,6 +973,7 @@ public class SlotView : MonoBehaviour
                 }
             }
             
+            ResetFlowers();
             onComplete?.Invoke();
             return;
         }
@@ -816,21 +985,40 @@ public class SlotView : MonoBehaviour
 
     #region Stop Symbol Animations
 
+    public bool IsWildSymbol(int symId)
+    {
+        // Wild variants: ID 1 (Gold Coin), ID 16 (Wild Yin Yang), ID 17 (Wild Strawberry)
+        // Note: ID 10 is Green Gem (regular base symbol) and is NOT wild.
+        if (symId == 1 || symId == 16 || symId == 17) return true;
+        if (gameManager?.gameConfig != null && symId == gameManager.gameConfig.wildSymbolId && symId != 10) return true;
+        if (gameManager?.gameConfig?.symbols != null)
+        {
+            var sym = gameManager.gameConfig.symbols.Find(s => s.id == symId);
+            if (sym != null) return sym.isWild;
+        }
+        return false;
+    }
+
+    public bool IsStrawberrySymbol(int symId)
+    {
+        // Strawberry feature symbols: ID 11 (Red Strawberry), ID 12 (Gold Strawberry), ID 17 (Wild Strawberry)
+        return symId == 11 || symId == 12 || symId == 17;
+    }
+
+    public bool IsBlueberrySymbol(int symId)
+    {
+        // Blueberry feature symbols: ID 13 (Blueberry), ID 14 (Gold Berries), ID 15, ID 16
+        return symId == 13 || symId == 14 || symId == 15 || symId == 16;
+    }
+
+    public bool IsScatterSymbol(int symId)
+    {
+        return IsStrawberrySymbol(symId) || IsBlueberrySymbol(symId);
+    }
+
     private void PlayStopAnimationsForColumn(int col)
     {
-        if (currentDisplayMatrix == null || col >= currentDisplayMatrix.Count) return;
-        
-        for (int row = 0; row < currentDisplayMatrix[col].Count; row++)
-        {
-            int symId = currentDisplayMatrix[col][row];
-            int wildId = gameManager?.gameConfig != null ? gameManager.gameConfig.wildSymbolId : 10;
-            bool isWild = (symId == wildId);
-            
-            if (isWild)
-            {
-                AnimateSymbolSingleLoop(col, row, 1);
-            }
-        }
+        // No scale animations on symbol stop in Safari Ride
     }
 
     internal void AnimateAllScatters(int loopCount)
@@ -1037,199 +1225,226 @@ public class SlotView : MonoBehaviour
 
     internal void ShowWinLineAnimation(List<WinLine> winLines, System.Action onComplete)
     {
-        if (winLines == null || winLines.Count == 0)
+        if ((winLines == null || winLines.Count == 0) && (gameManager?.lastResult == null || gameManager.lastResult.winAmount <= 0))
         {
             onComplete?.Invoke();
             return;
         }
 
         KillWinTweens();
-        winAnimationCoroutine = StartCoroutine(PlayTwoPhaseWinLines(winLines, onComplete));
+        winAnimationCoroutine = StartCoroutine(PlayWinPresentation(winLines ?? new List<WinLine>(), onComplete));
     }
 
-    private IEnumerator PlayTwoPhaseWinLines(List<WinLine> winLines, System.Action onComplete)
+    private IEnumerator PlayWinPresentation(List<WinLine> winLines, System.Action onComplete)
     {
-        int rowLimit = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
-
-        // ==========================================
-        // PHASE 1: Show all winning icons at once
-        // ==========================================
+        // 1. Collect all winning positions across all win lines simultaneously
         HashSet<int> allWinPositions = new HashSet<int>();
-        foreach (var winLine in winLines)
+        double totalWinAmount = 0;
+        if (winLines != null)
         {
-            if (winLine.positions != null)
+            foreach (var winLine in winLines)
             {
-                foreach (int flatIndex in winLine.positions)
+                if (winLine.positions != null)
                 {
-                    allWinPositions.Add(flatIndex);
+                    foreach (int flatIndex in winLine.positions)
+                    {
+                        allWinPositions.Add(flatIndex);
+                    }
                 }
+                totalWinAmount += winLine.winAmount;
             }
         }
 
-        Debug.Log($"[PlayTwoPhaseWinLines] Phase 1: Showing all {allWinPositions.Count} winning icons at once for {winLines.Count} win lines");
-
-        // Calculate Phase 1 Total Win Amount
-        double totalWinAmount = 0;
-        foreach (var winLine in winLines)
-        {
-            totalWinAmount += winLine.winAmount;
-        }
         if (totalWinAmount <= 0 && gameManager != null && gameManager.lastResult != null)
         {
             totalWinAmount = gameManager.lastResult.winAmount;
         }
 
-        // Show Phase 1 Total Win Text with final win value
-        ShowPhase1TotalWin(totalWinAmount);
-
-        AudioManager.Instance?.PlayWinLinePhase1Start();
-
-        // Animate all winning symbols and wait for their ImageAnimation loops to complete
-        yield return StartCoroutine(AnimateWinPositions(allWinPositions));
-
-        KillWinTweens(false);
-        HideAllWinLineTexts();
-        HidePhase1TotalWinText();
-
-        // Invoke onComplete immediately after Phase 1 so game logic (Free Spins / Autoplay / Win complete) can proceed
-        onComplete?.Invoke();
-
-        // Skip Phase 2 if in Free Spins, Autoplay, or if a Special Feature (USpin, MoneyBag, Scatter trigger) was triggered
-        bool hasSpecialFeature = (gameManager != null && gameManager.lastResult != null && (
-            (gameManager.lastResult.uSpinData != null && gameManager.lastResult.uSpinData.triggered) ||
-            (gameManager.lastResult.moneyBagData != null && gameManager.lastResult.moneyBagData.triggered) ||
-            (gameManager.lastResult.freeSpinData != null && gameManager.lastResult.freeSpinData.isTriggered)
-        ));
-
-        bool skipPhase2 = (gameManager != null && (gameManager.isInFreeSpins || gameManager.isAutoPlaying)) || hasSpecialFeature;
-        if (skipPhase2)
-        {
-            yield break;
-        }
-
-        // ==========================================
-        // PHASE 2: Individual Win Line presentation loop
-        // ==========================================
-        while (true)
+        // Safety net: If positions were not sent in winLines, reconstruct from paylines definition
+        if (allWinPositions.Count == 0 && winLines != null)
         {
             foreach (var winLine in winLines)
             {
-                if (winLine.positions == null || winLine.positions.Count == 0) continue;
-
-                KillWinTweens(false);
-                HideAllWinLineTexts();
-
-                // Show WinLineText on 1st icon of the active win line only if there are multiple win lines
-                if (winLines.Count > 1)
+                if (gameManager?.gameConfig?.paylines != null && winLine.lineId >= 0 && winLine.lineId < gameManager.gameConfig.paylines.Count)
                 {
-                    int firstFlatIndex = winLine.positions[0];
-                    int firstRow = firstFlatIndex / 5;
-                    int firstCol = firstFlatIndex % 5;
-                    ShowWinLineTextOnIcon(firstCol, firstRow, winLine.winAmount);
+                    var lineCoords = gameManager.gameConfig.paylines[winLine.lineId];
+                    int count = winLine.symbolIds != null && winLine.symbolIds.Count > 0 ? winLine.symbolIds.Count : (lineCoords != null ? lineCoords.Count : 3);
+                    for (int c = 0; c < count && c < 5 && c < lineCoords.Count; c++)
+                    {
+                        int r = lineCoords[c];
+                        allWinPositions.Add(r * 5 + c);
+                    }
                 }
-
-                // Animate win line symbols and wait for their ImageAnimation loops to complete
-                yield return StartCoroutine(AnimateWinPositions(winLine.positions));
             }
         }
+
+        // Additional safety net: If allWinPositions is still empty but totalWinAmount > 0, find matching line symbols
+        if (allWinPositions.Count == 0 && totalWinAmount > 0 && currentDisplayMatrix != null)
+        {
+            int rowCount = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
+            for (int r = 0; r < rowCount; r++)
+            {
+                if (currentDisplayMatrix.Count > 0 && r < currentDisplayMatrix[0].Count)
+                {
+                    int firstSym = currentDisplayMatrix[0][r];
+                    int matchLen = 1;
+                    for (int c = 1; c < 5 && c < currentDisplayMatrix.Count; c++)
+                    {
+                        if (r < currentDisplayMatrix[c].Count && (currentDisplayMatrix[c][r] == firstSym || currentDisplayMatrix[c][r] == 1 || currentDisplayMatrix[c][r] == 16 || currentDisplayMatrix[c][r] == 17))
+                        {
+                            matchLen++;
+                        }
+                        else break;
+                    }
+                    if (matchLen >= 3)
+                    {
+                        for (int c = 0; c < matchLen; c++) allWinPositions.Add(r * 5 + c);
+                    }
+                }
+            }
+            if (allWinPositions.Count == 0)
+            {
+                for (int c = 0; c < 3; c++) allWinPositions.Add(1 * 5 + c);
+            }
+        }
+
+        Debug.Log($"[PlayWinPresentation] Highlighting all {allWinPositions.Count} winning icons across {winLines?.Count ?? 0} win lines simultaneously");
+
+        // 2. Show Total Win Text and play win sound
+        ShowPhase1TotalWin(totalWinAmount);
+        AudioManager.Instance?.PlayWinLinePhase1Start();
+
+        // 3. Highlight all winning symbols at once and dim non-winning symbols (no scale animation)
+        HighlightWinningPositions(allWinPositions);
+
+        yield return new WaitForSeconds(winSymbolLoopDuration);
+
+        // 4. Notify GameManager that win presentation is displayed so popups/autoplay/free spins can proceed
+        onComplete?.Invoke();
+
+        // All winning symbols stay highlighted together while at rest; no cycling individual paylines!
     }
 
-    private IEnumerator AnimateWinPositions(IEnumerable<int> flatPositions)
+    private void HighlightWinningPositions(HashSet<int> winPositions)
     {
-        if (flatPositions == null) yield break;
-
         int rowLimit = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
-        int loopCountTarget = (gameManager != null && (gameManager.isInFreeSpins || gameManager.isAutoPlaying)) ? 1 : winSymbolLoopCount;
 
-        List<ImageAnimation> activeAnims = new List<ImageAnimation>();
-        int completedCount = 0;
-        bool isCompleted = false;
+        Debug.Log($"[HighlightWinningPositions] winPositions count: {winPositions?.Count ?? 0}. Items: {(winPositions != null ? string.Join(", ", winPositions) : "null")}");
 
-        foreach (int flatIndex in flatPositions)
+        for (int col = 0; col < 5; col++)
         {
-            int row = flatIndex / 5;
-            int col = flatIndex % 5;
-
-            if (col < 0 || col >= 5 || row < 0 || row >= rowLimit) continue;
-
-            EnableWinBox(col, row);
-
-            Image symbolImage = GetVisibleImage(col, row);
-            if (symbolImage == null) continue;
-
-            var animGO = GetWinAnimationObject(col, row);
-            if (animGO == null) continue;
-
-            ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
-            if (imageAnim == null) continue;
-
-            if (col >= currentDisplayMatrix.Count || row >= currentDisplayMatrix[col].Count) continue;
-            int symbolId = currentDisplayMatrix[col][row];
-            if (symbolId < 0 || symbolId >= animationSpriteArrays.Length) continue;
-
-            List<Sprite> animSprites = animationSpriteArrays[symbolId];
-            if (animSprites == null || animSprites.Count == 0) continue;
-
-            imageAnim.textureArray = animSprites;
-            imageAnim.doLoopAnimation = true;
-
-            animGO.SetActive(true);
-            Image animRenderer = imageAnim.rendererDelegate != null ? imageAnim.rendererDelegate : animGO.GetComponent<Image>();
-            if (animRenderer != null)
+            for (int row = 0; row < rowLimit; row++)
             {
-                animRenderer.DOKill();
-                Color c = animRenderer.color;
-                animRenderer.color = new Color(c.r, c.g, c.b, 1f);
-            }
+                int flatIndex = row * 5 + col;
+                bool isWinning = winPositions != null && winPositions.Contains(flatIndex);
 
-            symbolImage.DOKill();
-            symbolImage.DOFade(0f, 0.2f);
-
-            activeAnims.Add(imageAnim);
-
-            imageAnim.onLoopComplete = (currentLoop) =>
-            {
-                if (currentLoop >= loopCountTarget)
+                Image symbolImage = GetVisibleImage(col, row);
+                if (symbolImage != null)
                 {
-                    imageAnim.onLoopComplete = null;
-                    imageAnim.StopAnimation();
-                    if (animGO != null && animGO.GetComponent<SymbolButtonHandler>() == null)
+                    symbolImage.DOKill();
+                    symbolImage.transform.DOKill();
+                    symbolImage.transform.localScale = Vector3.one;
+
+                    Transform animChild = symbolImage.transform.Find("AnimObject");
+                    if (animChild == null && symbolImage.transform.parent != null)
                     {
-                        animGO.SetActive(false);
+                        animChild = symbolImage.transform.parent.Find("AnimObject");
+                    }
+                    if (animChild == null)
+                    {
+                        var imgAnim = symbolImage.GetComponentInChildren<ImageAnimation>(true);
+                        if (imgAnim != null) animChild = imgAnim.transform;
                     }
 
-                    if (symbolImage != null)
+                    if (isWinning)
                     {
-                        symbolImage.DOKill();
-                        symbolImage.DOFade(1f, 0.2f);
-                    }
+                        // Full opacity on winning symbol (no scale animation)
+                        Color c = symbolImage.color;
+                        symbolImage.color = new Color(c.r, c.g, c.b, 1f);
 
-                    completedCount++;
-                    if (completedCount >= activeAnims.Count)
+                        // Activate highlight frame animation directly on the icon
+                        if (animChild != null)
+                        {
+                            animChild.gameObject.SetActive(true);
+                            animChild.transform.localScale = Vector3.one;
+
+                            // Ensure frame renders BEHIND the symbol icon, but IN FRONT of the background:
+                            // MainCanvas is order 0 (SlotBG, background).
+                            // Frame (animChild) is order 1 (visible in front of background).
+                            // Symbol (symbolImage) is order 2 (in front of the frame).
+                            Canvas iconCanvas = symbolImage.GetComponent<Canvas>();
+                            if (iconCanvas == null)
+                            {
+                                iconCanvas = symbolImage.gameObject.AddComponent<Canvas>();
+                            }
+                            iconCanvas.overrideSorting = true;
+                            iconCanvas.sortingOrder = 2;
+
+                            Canvas childCanvas = animChild.GetComponent<Canvas>();
+                            if (childCanvas == null)
+                            {
+                                childCanvas = animChild.gameObject.AddComponent<Canvas>();
+                            }
+                            childCanvas.overrideSorting = true;
+                            childCanvas.sortingOrder = 1;
+
+                            // Prevent frame from intercepting clicks
+                            Image frameImg = animChild.GetComponent<Image>();
+                            if (frameImg != null)
+                            {
+                                frameImg.raycastTarget = false;
+                            }
+
+                            // Ensure exact frame dimensions
+                            RectTransform animRect = animChild.GetComponent<RectTransform>();
+                            if (animRect != null)
+                            {
+                                animRect.sizeDelta = new Vector2(248f, 238f);
+                            }
+
+                            ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
+                            if (frameAnim != null)
+                            {
+                                if ((frameAnim.textureArray == null || frameAnim.textureArray.Count == 0) && highlightFrameSprites != null && highlightFrameSprites.Count > 0)
+                                {
+                                    frameAnim.textureArray = highlightFrameSprites;
+                                }
+                                if (frameAnim.rendererDelegate == null)
+                                {
+                                    frameAnim.rendererDelegate = animChild.GetComponent<Image>();
+                                }
+                                frameAnim.doLoopAnimation = true;
+                                frameAnim.StartAnimation();
+                            }
+
+                            Debug.Log($"[HighlightWinningPositions] Winning col {col}, row {row} (flatIndex {flatIndex}): symbol={symbolImage.name}, animChild={animChild.name}, activeSelf={animChild.gameObject.activeSelf}");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[HighlightWinningPositions] animChild is NULL on col {col}, row {row} (flatIndex {flatIndex})!");
+                        }
+                    }
+                    else
                     {
-                        isCompleted = true;
+                        Canvas nonWinCanvas = symbolImage.GetComponent<Canvas>();
+                        if (nonWinCanvas != null)
+                        {
+                            nonWinCanvas.overrideSorting = false;
+                        }
+
+                        // Non-winning symbols dim to 35% opacity (no scale animation)
+                        symbolImage.DOFade(0.35f, 0.2f);
+
+                        // Stop and deactivate highlight frame
+                        if (animChild != null)
+                        {
+                            ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
+                            if (frameAnim != null) frameAnim.StopAnimation();
+                            animChild.gameObject.SetActive(false);
+                        }
                     }
                 }
-            };
-        }
-
-        if (winLineBoxToAnimationDelay > 0)
-        {
-            yield return new WaitForSeconds(winLineBoxToAnimationDelay);
-        }
-
-        foreach (var imageAnim in activeAnims)
-        {
-            imageAnim.StartAnimation();
-        }
-
-        if (activeAnims.Count > 0)
-        {
-            yield return new WaitUntil(() => isCompleted);
-        }
-        else
-        {
-            yield return new WaitForSeconds(winSymbolLoopDuration);
+            }
         }
     }
 
@@ -1278,6 +1493,14 @@ public class SlotView : MonoBehaviour
     {
         if (phase1TotalWinText != null)
         {
+            Canvas textCanvas = phase1TotalWinText.GetComponent<Canvas>();
+            if (textCanvas == null)
+            {
+                textCanvas = phase1TotalWinText.gameObject.AddComponent<Canvas>();
+            }
+            textCanvas.overrideSorting = true;
+            textCanvas.sortingOrder = 10;
+
             phase1TotalWinText.text = totalWinAmount.ToString("0.###");
             AnimateTextScaleAppear(phase1TotalWinText.transform);
         }
@@ -1307,21 +1530,12 @@ public class SlotView : MonoBehaviour
     }
     private void EnableWinBox(int col, int row)
     {
-        var go = WinBox(winBoxColumns, col, row);
-        if (go)
-        {
-            go.SetActive(true);
-        }
-        else
-        {
-            Debug.LogError($"[EnableWinBox] WinBox GameObject is NULL at col: {col}, row: {row}");
-        }
+        // No-op in Safari Ride: highlight frame is handled directly on each SlotIcon via AnimObject
     }
 
     private void DisableWinBox(int col, int row)
     {
-        var go = WinBox(winBoxColumns, col, row);
-        if (go) go.SetActive(false);
+        // No-op in Safari Ride: highlight frame is handled directly on each SlotIcon via AnimObject
     }
 
     private void ResetSymbolScale(int col, int row)
@@ -1331,24 +1545,21 @@ public class SlotView : MonoBehaviour
         {
             symbolImage.DOKill();
             symbolImage.transform.localScale = Vector3.one;
-            // Restore alpha to full opacity
             Color c = symbolImage.color;
             symbolImage.color = new Color(c.r, c.g, c.b, 1f);
-        }
 
-        // Also ensure the corresponding animation object is disabled
-        var animGO = GetWinAnimationObject(col, row);
-        if (animGO != null)
-        {
-            ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
-            if (imageAnim != null)
+            Canvas iconCanvas = symbolImage.GetComponent<Canvas>();
+            if (iconCanvas != null)
             {
-                if (imageAnim.rendererDelegate != null) imageAnim.rendererDelegate.DOKill();
-                imageAnim.StopAnimation();
+                iconCanvas.overrideSorting = false;
             }
-            if (animGO.GetComponent<SymbolButtonHandler>() == null)
+
+            Transform animChild = symbolImage.transform.Find("AnimObject");
+            if (animChild != null)
             {
-                animGO.SetActive(false);
+                ImageAnimation imageAnim = animChild.GetComponent<ImageAnimation>();
+                if (imageAnim != null) imageAnim.StopAnimation();
+                animChild.gameObject.SetActive(false);
             }
         }
     }
@@ -1477,60 +1688,29 @@ public class SlotView : MonoBehaviour
             winAnimationCoroutine = null;
         }
 
-        // Stop all win animations and disable animation GameObjects
-        if (winAnimationColumns != null)
-        {
-            for (int col = 0; col < winAnimationColumns.Length; col++)
-            {
-                if (winAnimationColumns[col]?.rows != null)
-                {
-                    for (int row = 0; row < winAnimationColumns[col].rows.Length; row++)
-                    {
-                        GameObject animGO = GetWinAnimationObject(col, row);
-                        if (animGO != null)
-                        {
-                            ImageAnimation imageAnim = animGO.GetComponent<ImageAnimation>();
-                            if (imageAnim != null)
-                            {
-                                imageAnim.onLoopComplete = null;
-                                if (imageAnim.rendererDelegate != null)
-                                {
-                                    imageAnim.rendererDelegate.DOKill();
-                                    Color ac = imageAnim.rendererDelegate.color;
-                                    imageAnim.rendererDelegate.color = new Color(ac.r, ac.g, ac.b, 1f);
-                                }
-                                imageAnim.StopAnimation();
-                            }
-                            // Never disable a reel symbol root!
-                            if (animGO.GetComponent<SymbolButtonHandler>() == null && animGO.activeSelf)
-                            {
-                                animGO.SetActive(false);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        DisableColumns(winBoxColumns);
+        DisableAllHighlightFrames();
         HideAllWinLineTexts();
         HidePhase1TotalWinText();
 
         // Restore all symbol image alphas to full opacity and ensure active
-        foreach (var reel in reelImagesList)
+        if (reelImagesList != null)
         {
-            if (reel.images != null)
+            foreach (var reel in reelImagesList)
             {
-                foreach (var image in reel.images)
+                if (reel?.images != null)
                 {
-                    if (image != null)
+                    foreach (var image in reel.images)
                     {
-                        image.gameObject.SetActive(true);
-                        image.enabled = true;
-                        image.DOKill();
-                        image.transform.localScale = Vector3.one;
-                        Color c = image.color;
-                        image.color = new Color(c.r, c.g, c.b, 1f);
+                        if (image != null)
+                        {
+                            image.gameObject.SetActive(true);
+                            image.enabled = true;
+                            image.DOKill();
+                            image.transform.DOKill();
+                            image.transform.localScale = Vector3.one;
+                            Color c = image.color;
+                            image.color = new Color(c.r, c.g, c.b, 1f);
+                        }
                     }
                 }
             }
