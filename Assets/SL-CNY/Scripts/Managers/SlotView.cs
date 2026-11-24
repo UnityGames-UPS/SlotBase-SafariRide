@@ -115,11 +115,18 @@ public class SlotView : MonoBehaviour
     [Header("Phase 1 Total Win Presentation")]
     [SerializeField] private TMPro.TMP_Text phase1TotalWinText;
 
-    [Header("Win Box Overlays — Col 0..4  (each has 3 rows: 0=top .. 2=bottom)")]
-    [SerializeField] private ColumnOverlays[] winBoxColumns = new ColumnOverlays[5];
+    [Header("Win Overlays Architecture (Optimized Separate Objects)")]
+    [Tooltip("The GreyOverlay GameObject that dims all base reel icons and background")]
+    [SerializeField] private GameObject greyOverlay;
 
-    [Header("Win Animation Objects — Col 0..4  (each has 3 rows, contains ImageAnimation component)")]
-    [Tooltip("GameObject references for win animations. Each should have an ImageAnimation component attached.")]
+    [Header("Win Frames (Slots_Frame: 5 Columns, 3 Rows each with ImageAnimation)")]
+    [SerializeField] private ColumnOverlays[] winFrameColumns = new ColumnOverlays[5];
+
+    [Header("Win Symbols / Win Slots (WinSymbols: 5 Columns, 3 Rows each with Image)")]
+    [SerializeField] private ColumnOverlays[] winSymbolColumns = new ColumnOverlays[5];
+
+    [Header("Legacy Overlay References (Optional / Fallback)")]
+    [SerializeField] private ColumnOverlays[] winBoxColumns = new ColumnOverlays[5];
     [SerializeField] private ColumnOverlays[] winAnimationColumns = new ColumnOverlays[5];
 
     [Header("Safari Ride Win Highlight Frame Animation (31 frames from Frame_Animation)")]
@@ -144,12 +151,65 @@ public class SlotView : MonoBehaviour
 
     private bool isSpinning;
 
+    // Fast 1-time cached overlay components for 0-allocation, 0-GetComponent runtime execution
+    private Image[,] cachedWinSymbolImages = new Image[5, 3];
+    private ImageAnimation[,] cachedWinFrameAnims = new ImageAnimation[5, 3];
+
     #region Initialization
 
     private void Awake()
     {
         BuildSymbolSpriteArray();
         InitializeReels();
+        CacheWinOverlayComponents();
+    }
+
+    private void CacheWinOverlayComponents()
+    {
+        for (int c = 0; c < 5; c++)
+        {
+            for (int r = 0; r < 3; r++)
+            {
+                // Cache Win Symbol Images
+                if (winSymbolColumns != null && c < winSymbolColumns.Length && winSymbolColumns[c]?.rows != null && r < winSymbolColumns[c].rows.Length)
+                {
+                    var go = winSymbolColumns[c].rows[r];
+                    if (go != null)
+                    {
+                        cachedWinSymbolImages[c, r] = go.GetComponent<Image>();
+                    }
+                }
+
+                // Cache Win Frame Animations
+                GameObject frameGO = null;
+                if (winFrameColumns != null && c < winFrameColumns.Length && winFrameColumns[c]?.rows != null && r < winFrameColumns[c].rows.Length)
+                {
+                    frameGO = winFrameColumns[c].rows[r];
+                }
+                else if (winAnimationColumns != null && c < winAnimationColumns.Length && winAnimationColumns[c]?.rows != null && r < winAnimationColumns[c].rows.Length)
+                {
+                    frameGO = winAnimationColumns[c].rows[r];
+                }
+
+                if (frameGO != null)
+                {
+                    var anim = frameGO.GetComponent<ImageAnimation>();
+                    if (anim != null)
+                    {
+                        if ((anim.textureArray == null || anim.textureArray.Count == 0) && highlightFrameSprites != null && highlightFrameSprites.Count > 0)
+                        {
+                            anim.textureArray = highlightFrameSprites;
+                        }
+                        if (anim.rendererDelegate == null)
+                        {
+                            anim.rendererDelegate = frameGO.GetComponent<Image>();
+                        }
+                        anim.doLoopAnimation = true;
+                        cachedWinFrameAnims[c, r] = anim;
+                    }
+                }
+            }
+        }
     }
 
     private void Start()
@@ -157,25 +217,6 @@ public class SlotView : MonoBehaviour
         if (symbolSprites == null || symbolSprites.Length == 0)
         {
             BuildSymbolSpriteArray();
-        }
-
-        // Auto-populate highlight frame sprites if empty (Editor or runtime fallback)
-        if (highlightFrameSprites == null || highlightFrameSprites.Count == 0)
-        {
-            var loadedSprites = Resources.FindObjectsOfTypeAll<Sprite>();
-            if (loadedSprites != null && loadedSprites.Length > 0)
-            {
-                var frameList = new List<Sprite>();
-                foreach (var s in loadedSprites)
-                {
-                    if (s != null && s.name.StartsWith("Frame_Animation"))
-                    {
-                        frameList.Add(s);
-                    }
-                }
-                frameList.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
-                highlightFrameSprites = frameList;
-            }
         }
 
         DisableAllOverlays();
@@ -253,71 +294,35 @@ public class SlotView : MonoBehaviour
 
     private void DisableAllOverlays()
     {
-        DisableAllHighlightFrames();
-        HideAllWinLineTexts();
-        HidePhase1TotalWinText();
-        if (symbolInfoCard) symbolInfoCard.HideCard();
-
-        // Safety: ensure every symbol on every reel strip is active, enabled, and fully opaque
-        if (reelImagesList != null)
+        if (greyOverlay != null)
         {
-            foreach (var reel in reelImagesList)
+            greyOverlay.SetActive(false);
+        }
+
+        for (int c = 0; c < 5; c++)
+        {
+            for (int r = 0; r < 3; r++)
             {
-                if (reel?.images != null)
+                var winImg = cachedWinSymbolImages[c, r];
+                if (winImg != null) winImg.gameObject.SetActive(false);
+
+                var frameAnim = cachedWinFrameAnims[c, r];
+                if (frameAnim != null)
                 {
-                    foreach (var image in reel.images)
-                    {
-                        if (image != null)
-                        {
-                            image.gameObject.SetActive(true);
-                            image.enabled = true;
-                            image.DOKill();
-                            image.transform.DOKill();
-                            image.transform.localScale = Vector3.one;
-                            Color c = image.color;
-                            image.color = new Color(c.r, c.g, c.b, 1f);
-                        }
-                    }
+                    frameAnim.StopAnimation();
+                    frameAnim.gameObject.SetActive(false);
                 }
             }
         }
+
+        HideAllWinLineTexts();
+        HidePhase1TotalWinText();
+        if (symbolInfoCard) symbolInfoCard.HideCard();
     }
 
     private void DisableAllHighlightFrames()
     {
-        if (reelImagesList != null)
-        {
-            foreach (var reel in reelImagesList)
-            {
-                if (reel?.images != null)
-                {
-                    foreach (var image in reel.images)
-                    {
-                        if (image != null)
-                        {
-                            Canvas iconCanvas = image.GetComponent<Canvas>();
-                            if (iconCanvas != null)
-                            {
-                                iconCanvas.overrideSorting = false;
-                            }
-
-                            Transform animChild = image.transform.Find("AnimObject");
-                            if (animChild == null)
-                            {
-                                var imgAnim = image.GetComponentInChildren<ImageAnimation>(true);
-                                if (imgAnim != null) animChild = imgAnim.transform;
-                            }
-                            if (animChild != null)
-                            {
-                                ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
-                                if (frameAnim != null) frameAnim.StopAnimation();
-                                animChild.gameObject.SetActive(false);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        DisableAllOverlays();
     }
 
     private void SetupSymbolButtons()
@@ -770,6 +775,12 @@ public class SlotView : MonoBehaviour
 
         for (int col = 0; col < 5; col++)
         {
+            // Ensure slot 4's flower (flowerCol3) is turned off before starting animation/spin of slot 5 (col 4)
+            if (col == 4)
+            {
+                ResetSingleFlower(flowerCol3);
+            }
+
             // Anticipation check on reels 3 and 4 (the 4th and 5th reels)
             // Only trigger tease if at least 2 reels have landed Strawberries OR at least 2 reels have landed Blueberries!
             bool shouldTease = (col == 3 || col == 4) && (strawberryCount >= 2 || blueberryCount >= 2);
@@ -780,6 +791,16 @@ public class SlotView : MonoBehaviour
             }
 
             StopSingleReel(col, resultMatrix[col], isQuickStop);
+
+            // Once reel 3 (slot 4) stops and displays its result, turn its flower off immediately!
+            if (col == 3)
+            {
+                ResetSingleFlower(flowerCol3);
+            }
+            else if (col == 4)
+            {
+                ResetSingleFlower(flowerCol4);
+            }
 
             // Count landed feature scatters on this reel (strawberry and blueberry)
             if (resultMatrix != null && col < resultMatrix.Count && resultMatrix[col] != null)
@@ -924,6 +945,9 @@ public class SlotView : MonoBehaviour
     private void ResetSingleFlower(GameObject flowerGO)
     {
         if (flowerGO == null) return;
+        flowerGO.transform.DOKill();
+        flowerGO.transform.localScale = Vector3.one;
+
         ImageAnimation anim = flowerGO.GetComponent<ImageAnimation>();
         if (anim != null)
         {
@@ -935,12 +959,8 @@ public class SlotView : MonoBehaviour
         {
             img.sprite = flowerClosedSprite;
         }
-        else if (flowerClosedSprite == null)
-        {
-            flowerGO.SetActive(false);
-        }
-        flowerGO.transform.DOKill();
-        flowerGO.transform.localScale = Vector3.one;
+
+        flowerGO.SetActive(false);
     }
 
     #endregion
@@ -1329,8 +1349,13 @@ public class SlotView : MonoBehaviour
     {
         int rowLimit = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
 
-        Debug.Log($"[HighlightWinningPositions] winPositions count: {winPositions?.Count ?? 0}. Items: {(winPositions != null ? string.Join(", ", winPositions) : "null")}");
+        // 1. Activate grey overlay so all non-winning reel icons behind are dimmed
+        if (greyOverlay != null)
+        {
+            greyOverlay.SetActive(true);
+        }
 
+        // 2. Direct activation using cached components (0 lookups, 0 GetComponent calls)
         for (int col = 0; col < 5; col++)
         {
             for (int row = 0; row < rowLimit; row++)
@@ -1338,110 +1363,42 @@ public class SlotView : MonoBehaviour
                 int flatIndex = row * 5 + col;
                 bool isWinning = winPositions != null && winPositions.Contains(flatIndex);
 
-                Image symbolImage = GetVisibleImage(col, row);
-                if (symbolImage != null)
+                var winImg = cachedWinSymbolImages[col, row];
+                var frameAnim = cachedWinFrameAnims[col, row];
+
+                if (isWinning)
                 {
-                    symbolImage.DOKill();
-                    symbolImage.transform.DOKill();
-                    symbolImage.transform.localScale = Vector3.one;
+                    // A. Setup winning duplicate symbol: replace sprite FIRST, then turn ON
+                    if (winImg != null)
+                    {
+                        int symbolId = (currentDisplayMatrix != null && col < currentDisplayMatrix.Count && row < currentDisplayMatrix[col].Count)
+                            ? currentDisplayMatrix[col][row]
+                            : 0;
 
-                    Transform animChild = symbolImage.transform.Find("AnimObject");
-                    if (animChild == null && symbolImage.transform.parent != null)
-                    {
-                        animChild = symbolImage.transform.parent.Find("AnimObject");
-                    }
-                    if (animChild == null)
-                    {
-                        var imgAnim = symbolImage.GetComponentInChildren<ImageAnimation>(true);
-                        if (imgAnim != null) animChild = imgAnim.transform;
+                        winImg.sprite = GetSymbolSprite(symbolId);
+                        winImg.color = Color.white;
+                        winImg.raycastTarget = false;
+                        winImg.gameObject.SetActive(true);
                     }
 
-                    if (isWinning)
+                    // B. Setup and play highlight frame animation
+                    if (frameAnim != null)
                     {
-                        // Full opacity on winning symbol (no scale animation)
-                        Color c = symbolImage.color;
-                        symbolImage.color = new Color(c.r, c.g, c.b, 1f);
-
-                        // Activate highlight frame animation directly on the icon
-                        if (animChild != null)
-                        {
-                            animChild.gameObject.SetActive(true);
-                            animChild.transform.localScale = Vector3.one;
-
-                            // Ensure frame renders BEHIND the symbol icon, but IN FRONT of the background:
-                            // MainCanvas is order 0 (SlotBG, background).
-                            // Frame (animChild) is order 1 (visible in front of background).
-                            // Symbol (symbolImage) is order 2 (in front of the frame).
-                            Canvas iconCanvas = symbolImage.GetComponent<Canvas>();
-                            if (iconCanvas == null)
-                            {
-                                iconCanvas = symbolImage.gameObject.AddComponent<Canvas>();
-                            }
-                            iconCanvas.overrideSorting = true;
-                            iconCanvas.sortingOrder = 2;
-
-                            Canvas childCanvas = animChild.GetComponent<Canvas>();
-                            if (childCanvas == null)
-                            {
-                                childCanvas = animChild.gameObject.AddComponent<Canvas>();
-                            }
-                            childCanvas.overrideSorting = true;
-                            childCanvas.sortingOrder = 1;
-
-                            // Prevent frame from intercepting clicks
-                            Image frameImg = animChild.GetComponent<Image>();
-                            if (frameImg != null)
-                            {
-                                frameImg.raycastTarget = false;
-                            }
-
-                            // Ensure exact frame dimensions
-                            RectTransform animRect = animChild.GetComponent<RectTransform>();
-                            if (animRect != null)
-                            {
-                                animRect.sizeDelta = new Vector2(248f, 238f);
-                            }
-
-                            ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
-                            if (frameAnim != null)
-                            {
-                                if ((frameAnim.textureArray == null || frameAnim.textureArray.Count == 0) && highlightFrameSprites != null && highlightFrameSprites.Count > 0)
-                                {
-                                    frameAnim.textureArray = highlightFrameSprites;
-                                }
-                                if (frameAnim.rendererDelegate == null)
-                                {
-                                    frameAnim.rendererDelegate = animChild.GetComponent<Image>();
-                                }
-                                frameAnim.doLoopAnimation = true;
-                                frameAnim.StartAnimation();
-                            }
-
-                            Debug.Log($"[HighlightWinningPositions] Winning col {col}, row {row} (flatIndex {flatIndex}): symbol={symbolImage.name}, animChild={animChild.name}, activeSelf={animChild.gameObject.activeSelf}");
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[HighlightWinningPositions] animChild is NULL on col {col}, row {row} (flatIndex {flatIndex})!");
-                        }
+                        frameAnim.gameObject.SetActive(true);
+                        frameAnim.StartAnimation();
                     }
-                    else
+                }
+                else
+                {
+                    // Non-winning: ensure overlay frame and symbol are disabled
+                    if (frameAnim != null)
                     {
-                        Canvas nonWinCanvas = symbolImage.GetComponent<Canvas>();
-                        if (nonWinCanvas != null)
-                        {
-                            nonWinCanvas.overrideSorting = false;
-                        }
-
-                        // Non-winning symbols dim to 35% opacity (no scale animation)
-                        symbolImage.DOFade(0.35f, 0.2f);
-
-                        // Stop and deactivate highlight frame
-                        if (animChild != null)
-                        {
-                            ImageAnimation frameAnim = animChild.GetComponent<ImageAnimation>();
-                            if (frameAnim != null) frameAnim.StopAnimation();
-                            animChild.gameObject.SetActive(false);
-                        }
+                        frameAnim.StopAnimation();
+                        frameAnim.gameObject.SetActive(false);
+                    }
+                    if (winImg != null)
+                    {
+                        winImg.gameObject.SetActive(false);
                     }
                 }
             }
@@ -1493,14 +1450,6 @@ public class SlotView : MonoBehaviour
     {
         if (phase1TotalWinText != null)
         {
-            Canvas textCanvas = phase1TotalWinText.GetComponent<Canvas>();
-            if (textCanvas == null)
-            {
-                textCanvas = phase1TotalWinText.gameObject.AddComponent<Canvas>();
-            }
-            textCanvas.overrideSorting = true;
-            textCanvas.sortingOrder = 10;
-
             phase1TotalWinText.text = totalWinAmount.ToString("0.###");
             AnimateTextScaleAppear(phase1TotalWinText.transform);
         }
@@ -1540,26 +1489,19 @@ public class SlotView : MonoBehaviour
 
     private void ResetSymbolScale(int col, int row)
     {
-        Image symbolImage = GetVisibleImage(col, row);
-        if (symbolImage != null)
+        if (col >= 0 && col < 5 && row >= 0 && row < 3)
         {
-            symbolImage.DOKill();
-            symbolImage.transform.localScale = Vector3.one;
-            Color c = symbolImage.color;
-            symbolImage.color = new Color(c.r, c.g, c.b, 1f);
-
-            Canvas iconCanvas = symbolImage.GetComponent<Canvas>();
-            if (iconCanvas != null)
+            var frameAnim = cachedWinFrameAnims[col, row];
+            if (frameAnim != null)
             {
-                iconCanvas.overrideSorting = false;
+                frameAnim.StopAnimation();
+                frameAnim.gameObject.SetActive(false);
             }
 
-            Transform animChild = symbolImage.transform.Find("AnimObject");
-            if (animChild != null)
+            var winImg = cachedWinSymbolImages[col, row];
+            if (winImg != null)
             {
-                ImageAnimation imageAnim = animChild.GetComponent<ImageAnimation>();
-                if (imageAnim != null) imageAnim.StopAnimation();
-                animChild.gameObject.SetActive(false);
+                winImg.gameObject.SetActive(false);
             }
         }
     }
@@ -1688,9 +1630,7 @@ public class SlotView : MonoBehaviour
             winAnimationCoroutine = null;
         }
 
-        DisableAllHighlightFrames();
-        HideAllWinLineTexts();
-        HidePhase1TotalWinText();
+        DisableAllOverlays();
 
         // Restore all symbol image alphas to full opacity and ensure active
         if (reelImagesList != null)
