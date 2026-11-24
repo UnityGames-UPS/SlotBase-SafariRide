@@ -670,23 +670,27 @@ public static class InitDataConverter
         double newBalance = serverResponse.player?.balance ??
             (currentBalance - totalBetAmount + winAmount);
 
-        // When wildCoinMystery triggers, reels land on matrixBefore (base symbols), NOT serverResponse.matrix (which already contains gold coins)
-        var sourceMatrix = (serverResponse.payload?.wildCoinMystery != null 
-            && serverResponse.payload.wildCoinMystery.triggered 
-            && serverResponse.payload.wildCoinMystery.matrixBefore != null)
-            ? serverResponse.payload.wildCoinMystery.matrixBefore
+        // Wild Coin Mystery: only check the dedicated wildCoinMystery trigger field from payload
+        var mysteryResult = serverResponse.payload?.wildCoinMystery;
+        bool isMysteryTriggered = mysteryResult != null && mysteryResult.triggered;
+
+        // When wildCoinMystery triggers, reels land on matrixBefore, NOT serverResponse.matrix (which already contains gold coins)
+        var sourceMatrix = (isMysteryTriggered && mysteryResult.matrixBefore != null)
+            ? mysteryResult.matrixBefore
             : serverResponse.matrix;
 
-        WildCoinMysteryData mysteryData = (serverResponse.payload?.wildCoinMystery != null && serverResponse.payload.wildCoinMystery.triggered)
-            ? new WildCoinMysteryData
+        WildCoinMysteryData mysteryData = null;
+        if (isMysteryTriggered)
+        {
+            mysteryData = new WildCoinMysteryData
             {
                 triggered = true,
-                coinCount = serverResponse.payload.wildCoinMystery.coinCount,
-                positions = serverResponse.payload.wildCoinMystery.positions,
-                matrixBefore = ConvertReelsToMatrix(null, serverResponse.payload.wildCoinMystery.matrixBefore, gameConfig),
-                matrixAfter = ConvertReelsToMatrix(null, serverResponse.payload.wildCoinMystery.matrixAfter, gameConfig)
-            }
-            : null;
+                coinCount = mysteryResult.coinCount,
+                positions = mysteryResult.positions,
+                matrixBefore = ConvertReelsToMatrix(null, mysteryResult.matrixBefore, gameConfig),
+                matrixAfter = ConvertReelsToMatrix(null, mysteryResult.matrixAfter, gameConfig)
+            };
+        }
 
         SpinResult result = new SpinResult
         {

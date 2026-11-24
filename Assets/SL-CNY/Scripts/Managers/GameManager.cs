@@ -270,12 +270,24 @@ public class GameManager : MonoBehaviour
                 float quickStopWaitTime = 0.5f;
                 yield return new WaitForSeconds(quickStopWaitTime);
 
-                OnReelsStoppedComplete();
+                HandleReelsStopped();
             }
             else
             {
-                slotView.StopSpin(lastResult.resultMatrix, OnReelsStoppedComplete);
+                slotView.StopSpin(lastResult.resultMatrix, HandleReelsStopped);
             }
+        }
+        else
+        {
+            HandleReelsStopped();
+        }
+    }
+
+    private void HandleReelsStopped()
+    {
+        if (lastResult != null && lastResult.wildCoinMysteryData != null && lastResult.wildCoinMysteryData.triggered && slotView != null)
+        {
+            slotView.PlayMysteryCoinAnimation(lastResult.wildCoinMysteryData, OnReelsStoppedComplete);
         }
         else
         {

@@ -51,6 +51,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip clipReelStop;
     [SerializeField] private AudioClip clipAnticipation;
     [SerializeField] private AudioClip clipFlowerOpen;
+    [SerializeField] private AudioClip clipMysteryCoin;
 
     private bool _musicEnabled = true;
     private bool _sfxEnabled   = true;
@@ -314,6 +315,13 @@ public class AudioManager : MonoBehaviour
     {
         if (!_sfxEnabled || clipFlowerOpen == null) return;
         PlayUISound(clipFlowerOpen);
+    }
+
+    // 17. Mystery Coin Impact Sound
+    internal void PlayMysteryCoin()
+    {
+        if (!_sfxEnabled || clipMysteryCoin == null) return;
+        PlayUISound(clipMysteryCoin);
     }
 
     private bool isForceMuted = false;

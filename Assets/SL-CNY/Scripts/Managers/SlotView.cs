@@ -115,6 +115,22 @@ public class SlotView : MonoBehaviour
     [Header("Phase 1 Total Win Presentation")]
     [SerializeField] private TMPro.TMP_Text phase1TotalWinText;
 
+    [Header("Star Boom Animation")]
+    [Tooltip("Full-screen star boom animation played when win activates")]
+    [SerializeField] private GameObject starAnimationObject;
+    [Tooltip("Small delay before win line text pops out, so it appears out of the star explosion")]
+    [SerializeField] private float starToWinTextDelay = 0.05f;
+
+    [Header("Mystery Coin Feature")]
+    [Tooltip("Prefab for falling coins - assign in Inspector")]
+    [SerializeField] private GameObject mysteryCoinPrefab;
+    [Tooltip("UI container for falling coins - assign in Inspector")]
+    [SerializeField] private Transform mysteryCoinsContainer;
+    [Tooltip("Time in seconds for a coin to fall from top of screen to its symbol position")]
+    [SerializeField] private float mysteryCoinFallDuration = 0.75f;
+    [Tooltip("Stagger delay in seconds between consecutive falling coins")]
+    [SerializeField] private float mysteryCoinStaggerDelay = 0.12f;
+
     [Header("Win Overlays Architecture (Optimized Separate Objects)")]
     [Tooltip("The GreyOverlay GameObject that dims all base reel icons and background")]
     [SerializeField] private GameObject greyOverlay;
@@ -154,6 +170,9 @@ public class SlotView : MonoBehaviour
     // Fast 1-time cached overlay components for 0-allocation, 0-GetComponent runtime execution
     private Image[,] cachedWinSymbolImages = new Image[5, 3];
     private ImageAnimation[,] cachedWinFrameAnims = new ImageAnimation[5, 3];
+    private ImageAnimation cachedStarAnim;
+    private List<GameObject> pooledMysteryCoins = new List<GameObject>();
+    private Coroutine mysteryCoinCoroutine;
 
     #region Initialization
 
@@ -166,6 +185,38 @@ public class SlotView : MonoBehaviour
 
     private void CacheWinOverlayComponents()
     {
+        EnsureMysteryCoinPool();
+
+        // Cache Star Boom Animation
+        if (starAnimationObject != null)
+        {
+            var img = starAnimationObject.GetComponent<Image>();
+            if (img != null) img.raycastTarget = false;
+
+            var rt = starAnimationObject.GetComponent<RectTransform>();
+            if (rt != null && rt.sizeDelta == new Vector2(100f, 100f))
+            {
+                rt.sizeDelta = new Vector2(1920f, 1080f);
+            }
+
+            cachedStarAnim = starAnimationObject.GetComponent<ImageAnimation>();
+            if (cachedStarAnim != null)
+            {
+                cachedStarAnim.doLoopAnimation = false;
+                cachedStarAnim.onLoopComplete = (count) =>
+                {
+                    if (cachedStarAnim != null && !cachedStarAnim.doLoopAnimation && starAnimationObject != null)
+                    {
+                        starAnimationObject.SetActive(false);
+                    }
+                };
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[SlotView] starAnimationObject is not assigned in the Inspector!");
+        }
+
         for (int c = 0; c < 5; c++)
         {
             for (int r = 0; r < 3; r++)
@@ -318,6 +369,28 @@ public class SlotView : MonoBehaviour
         HideAllWinLineTexts();
         HidePhase1TotalWinText();
         if (symbolInfoCard) symbolInfoCard.HideCard();
+
+        if (mysteryCoinCoroutine != null)
+        {
+            StopCoroutine(mysteryCoinCoroutine);
+            mysteryCoinCoroutine = null;
+        }
+        if (pooledMysteryCoins != null)
+        {
+            foreach (var coin in pooledMysteryCoins)
+            {
+                if (coin != null) coin.SetActive(false);
+            }
+        }
+
+        if (cachedStarAnim != null)
+        {
+            cachedStarAnim.StopAnimation();
+        }
+        if (starAnimationObject != null)
+        {
+            starAnimationObject.SetActive(false);
+        }
     }
 
     private void DisableAllHighlightFrames()
@@ -1331,6 +1404,15 @@ public class SlotView : MonoBehaviour
         Debug.Log($"[PlayWinPresentation] Highlighting all {allWinPositions.Count} winning icons across {winLines?.Count ?? 0} win lines simultaneously");
 
         // 2. Show Total Win Text and play win sound
+        // 1. Play Star boom animation right as win activates (exploding all over screen)
+        PlayStarAnimation();
+
+        if (starToWinTextDelay > 0)
+        {
+            yield return new WaitForSeconds(starToWinTextDelay);
+        }
+
+        // 2. Show Total Win Text and play win sound (pops out from the star boom)
         ShowPhase1TotalWin(totalWinAmount);
         AudioManager.Instance?.PlayWinLinePhase1Start();
 
@@ -1442,6 +1524,19 @@ public class SlotView : MonoBehaviour
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void PlayStarAnimation()
+    {
+        if (starAnimationObject != null)
+        {
+            starAnimationObject.SetActive(true);
+            if (cachedStarAnim != null)
+            {
+                cachedStarAnim.doLoopAnimation = false;
+                cachedStarAnim.StartAnimation();
             }
         }
     }
@@ -1700,6 +1795,202 @@ public class SlotView : MonoBehaviour
             }
         }
     }
+
+    #region Mystery Coin Animation
+
+    private const int MaxMysteryCoins = 7;
+
+    private void EnsureMysteryCoinPool()
+    {
+        if (mysteryCoinsContainer == null)
+        {
+            Debug.LogError("[SlotView] mysteryCoinsContainer is not assigned in the Inspector! Please assign it.");
+            return;
+        }
+
+        if (mysteryCoinPrefab == null)
+        {
+            Debug.LogError("[SlotView] mysteryCoinPrefab is not assigned in the Inspector! Please assign it.");
+            return;
+        }
+
+        if (pooledMysteryCoins == null)
+        {
+            pooledMysteryCoins = new List<GameObject>(MaxMysteryCoins);
+        }
+
+        while (pooledMysteryCoins.Count < MaxMysteryCoins)
+        {
+            GameObject coinObj = Instantiate(mysteryCoinPrefab, mysteryCoinsContainer);
+            coinObj.SetActive(false);
+            pooledMysteryCoins.Add(coinObj);
+        }
+    }
+
+    internal void PlayMysteryCoinAnimation(WildCoinMysteryData mysteryData, System.Action onComplete)
+    {
+        if (mysteryData == null || !mysteryData.triggered || mysteryData.positions == null || mysteryData.positions.Count == 0)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        if (mysteryCoinsContainer == null || mysteryCoinPrefab == null)
+        {
+            Debug.LogError("[SlotView] Cannot play mystery coin animation: mysteryCoinsContainer or mysteryCoinPrefab is not assigned in the Inspector!");
+            onComplete?.Invoke();
+            return;
+        }
+
+        if (mysteryCoinCoroutine != null)
+        {
+            StopCoroutine(mysteryCoinCoroutine);
+        }
+
+        mysteryCoinCoroutine = StartCoroutine(ExecuteMysteryCoinFall(mysteryData, mysteryData.positions, onComplete));
+    }
+
+    private IEnumerator ExecuteMysteryCoinFall(WildCoinMysteryData mysteryData, List<ServerPosition> positions, System.Action onComplete)
+    {
+        EnsureMysteryCoinPool();
+
+        Sequence masterSeq = DOTween.Sequence();
+        int count = Mathf.Min(positions.Count, MaxMysteryCoins);
+
+        for (int i = 0; i < count; i++)
+        {
+            var pos = positions[i];
+            int col = pos.col;
+            int row = pos.row;
+
+            Image targetSymbolImage = GetVisibleImage(col, row);
+            if (targetSymbolImage == null) continue;
+
+            // Target position in mysteryCoinsContainer coordinates
+            Vector3 targetWorld = targetSymbolImage.transform.position;
+            Vector3 targetLocal = mysteryCoinsContainer.InverseTransformPoint(targetWorld);
+
+            // Start position: out of screen above the top of the canvas (Y = 750f) aligned with target column
+            Vector3 startLocal = new Vector3(targetLocal.x, 750f, targetLocal.z);
+
+            // Determine replacement symbol from backend matrixAfter
+            int replacementSymbolId = (mysteryData.matrixAfter != null && col < mysteryData.matrixAfter.Count && row < mysteryData.matrixAfter[col].Count)
+                ? mysteryData.matrixAfter[col][row]
+                : 1;
+
+            Sprite replacementSprite = GetSymbolSprite(replacementSymbolId);
+
+            GameObject coinObj = pooledMysteryCoins[i];
+            if (coinObj == null) continue;
+
+            coinObj.transform.localPosition = startLocal;
+            coinObj.transform.localScale = Vector3.one;
+            coinObj.SetActive(true);
+
+            float delay = i * mysteryCoinStaggerDelay;
+            float fallDuration = mysteryCoinFallDuration;
+
+            Sequence coinSeq = DOTween.Sequence();
+            if (delay > 0) coinSeq.AppendInterval(delay);
+
+            // Smooth linear/ease-out trajectory so the falling coin is clearly visible on screen as it travels
+            coinSeq.Append(coinObj.transform.DOLocalMove(targetLocal, fallDuration).SetEase(Ease.OutCubic));
+            
+            // Brief landing punch on the coin itself before cross-fading into the reel symbol
+            coinSeq.Append(coinObj.transform.DOPunchScale(new Vector3(0.2f, 0.2f, 0f), 0.15f, 3, 0.5f));
+            coinSeq.AppendCallback(() =>
+            {
+                coinObj.SetActive(false);
+
+                // Replace visible reel symbol sprite
+                if (targetSymbolImage != null)
+                {
+                    targetSymbolImage.sprite = replacementSprite;
+                    targetSymbolImage.color = Color.white;
+                    targetSymbolImage.transform.DOKill();
+                    targetSymbolImage.transform.localScale = Vector3.one;
+                    targetSymbolImage.transform.DOPunchScale(new Vector3(0.25f, 0.25f, 0f), 0.25f, 4, 0.5f);
+                }
+
+                // If WinSymbols overlay for this cell exists, also update its sprite so winning highlights reflect the coin
+                if (cachedWinSymbolImages != null && col < 5 && row < 3 && cachedWinSymbolImages[col, row] != null)
+                {
+                    cachedWinSymbolImages[col, row].sprite = replacementSprite;
+                }
+
+                // Update display matrix so win lines & highlights reflect the replaced coins
+                if (currentDisplayMatrix != null && col < currentDisplayMatrix.Count && row < currentDisplayMatrix[col].Count)
+                {
+                    currentDisplayMatrix[col][row] = replacementSymbolId;
+                }
+
+                AudioManager.Instance?.PlayMysteryCoin();
+            });
+
+            masterSeq.Insert(0f, coinSeq);
+        }
+
+        winTweens.Add(masterSeq);
+        yield return masterSeq.WaitForCompletion();
+
+        // Brief settling pause after all coins have fallen
+        yield return new WaitForSeconds(0.25f);
+
+        mysteryCoinCoroutine = null;
+        onComplete?.Invoke();
+    }
+
+    [ContextMenu("Test Mystery Coin Fall (3 Coins)")]
+    public void TestMysteryCoinFall()
+    {
+        var testPositions = new List<ServerPosition>
+        {
+            new ServerPosition { col = 1, row = 1 },
+            new ServerPosition { col = 2, row = 0 },
+            new ServerPosition { col = 3, row = 2 }
+        };
+        var testData = new WildCoinMysteryData
+        {
+            triggered = true,
+            coinCount = 3,
+            positions = testPositions,
+            matrixBefore = currentDisplayMatrix,
+            matrixAfter = null
+        };
+        PlayMysteryCoinAnimation(testData, () => Debug.Log("[SlotView] Test Mystery Coin Fall (3 Coins) Complete!"));
+    }
+
+    [ContextMenu("Test Mystery Coin Fall (Random 2-7 Coins)")]
+    public void TestMysteryCoinFallRandom()
+    {
+        int coinCount = UnityEngine.Random.Range(2, 8); // 2 to 7
+        List<int> availableIndices = new List<int>();
+        for (int i = 0; i < 15; i++) availableIndices.Add(i);
+
+        var testPositions = new List<ServerPosition>();
+        for (int i = 0; i < coinCount; i++)
+        {
+            int rIdx = UnityEngine.Random.Range(0, availableIndices.Count);
+            int flat = availableIndices[rIdx];
+            availableIndices.RemoveAt(rIdx);
+
+            int col = flat % 5;
+            int row = flat / 5;
+            testPositions.Add(new ServerPosition { col = col, row = row });
+        }
+
+        var testData = new WildCoinMysteryData
+        {
+            triggered = true,
+            coinCount = coinCount,
+            positions = testPositions,
+            matrixBefore = currentDisplayMatrix,
+            matrixAfter = null
+        };
+        PlayMysteryCoinAnimation(testData, () => Debug.Log($"[SlotView] Test Mystery Coin Fall Complete with {coinCount} random coins!"));
+    }
+
+    #endregion
 
     #region Cleanup
 
