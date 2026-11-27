@@ -83,12 +83,21 @@ public class WildCoinMysteryFeature
     public bool enabled;
     public int maxCoins;
     public int minCoins;
+    public List<CoinWeight> coinWeights;
     public int tigerSymbolId;
+    public List<int> berriesSymbolIds;
     public int coinWildSymbolId;
     public double triggerProbability;
     public List<int> strawberrySymbolIds;
-    public int wildYinYangSymbolId;
+    public int wildBerriesSymbolId;
     public int wildStrawberrySymbolId;
+}
+
+[Serializable]
+public class CoinWeight
+{
+    public int coins;
+    public int weight;
 }
 
 [Serializable]
@@ -104,15 +113,23 @@ public class PickBonusFeature
     public List<PickBonusAnimal> animals;
     public bool enabled;
     public int gridSize;
+    public List<PickBonusWeight> pickWeights;
     public int initialPicks;
     public int triggerCount;
     public List<int> triggerSymbolIds;
 }
 
 [Serializable]
+public class PickBonusWeight
+{
+    public int picks;
+    public int weight;
+}
+
+[Serializable]
 public class PickBonusAnimal
 {
-    public string Name;
+    public string name;
     public int weight;
     public string animalId;
     public Dictionary<string, double> multipliers;
@@ -156,10 +173,13 @@ public class MoneyBagFeature
 [Serializable]
 public class FreeGamesFeature
 {
+    public List<int> reels;
     public bool enabled;
     public int spinsCount;
-    public int retriggerSpins;
-    public List<int> yinYangSymbolIds;
+    public int maxFreeSpins;
+    public int maxRetriggers;
+    public List<int> scatterSymbolIds;
+    public int retriggerSpinsCount;
 }
 
 [Serializable]
@@ -247,6 +267,7 @@ public class ServerPayload
     public ServerUSpinResult uSpin;
     public ServerMoneyBagResult moneyBag;
     public ServerFreeGamesResult freeGames;
+    public ServerPickBonusResult pickBonus;
 }
 
 [Serializable]
@@ -347,6 +368,26 @@ public class ServerFreeGamesResult
     public int totalAwarded;
     public int played;
     public double totalFreeGamesWin;
+}
+
+[Serializable]
+public class ServerPickBonusResult
+{
+    public bool triggered;
+    public bool active;
+    public int picksRemaining;
+    public List<ServerPickBonusReveal> revealed;
+    public Dictionary<string, int> counts;
+    public double pickWinCash;
+    public double totalBonusWin;
+    public bool isOver;
+}
+
+[Serializable]
+public class ServerPickBonusReveal
+{
+    public int index;
+    public string animalId;
 }
 
 // ============================================================================
@@ -461,6 +502,7 @@ public class SpinResult
     // Server-authoritative wheel data
     public USpinResultData uSpinData;
     public MoneyBagResultData moneyBagData;
+    public PickBonusResultData pickBonusData;
 
     public double GetMoneyBagWin()
     {
@@ -534,6 +576,26 @@ public class MoneyBagResultData
     public double winInCash;
 }
 
+[Serializable]
+public class PickBonusResultData
+{
+    public bool triggered;
+    public bool active;
+    public int picksRemaining;
+    public List<PickBonusRevealData> revealed;
+    public Dictionary<string, int> counts;
+    public double pickWinCash;
+    public double totalBonusWin;
+    public bool isOver;
+}
+
+[Serializable]
+public class PickBonusRevealData
+{
+    public int index;
+    public string animalId;
+}
+
 #endregion
 
 #region Platform Communication
@@ -557,7 +619,8 @@ public enum GameState
     Spinning,
     Stopping,
     ShowingWin,
-    FreeSpinMode
+    FreeSpinMode,
+    PickBonusMode
 }
 
 public enum SpinSpeed
@@ -630,14 +693,19 @@ public static class InitDataConverter
 
         HashSet<int> scatterIds = new HashSet<int>();
 
-        if (serverData.features?.freeGames?.yinYangSymbolIds != null)
+        if (serverData.features?.freeGames?.scatterSymbolIds != null)
         {
-            scatterIds.UnionWith(serverData.features.freeGames.yinYangSymbolIds);
+            scatterIds.UnionWith(serverData.features.freeGames.scatterSymbolIds);
         }
 
-        if(serverData.features?.pickBonus?.triggerSymbolIds != null)
+        if (serverData.features?.pickBonus?.triggerSymbolIds != null)
         {
             scatterIds.UnionWith(serverData.features.pickBonus.triggerSymbolIds);
+        }
+
+        if (serverData.features?.freeGames != null && serverData.features.freeGames.spinsCount > 0)
+        {
+            config.initialFreeSpins = serverData.features.freeGames.spinsCount;
         }
 
         foreach(SymbolInfo symbol in config.symbols)
@@ -692,12 +760,48 @@ public static class InitDataConverter
             };
         }
 
+        // Pick Bonus: convert trigger or completion payload when present
+        var serverPickBonus = serverResponse.payload?.pickBonus;
+        PickBonusResultData pickBonusData = null;
+        if (serverPickBonus != null)
+        {
+            var revealedList = new List<PickBonusRevealData>();
+            if (serverPickBonus.revealed != null)
+            {
+                foreach (var entry in serverPickBonus.revealed)
+                {
+                    if (entry == null) continue;
+                    revealedList.Add(new PickBonusRevealData
+                    {
+                        index = entry.index,
+                        animalId = entry.animalId
+                    });
+                }
+            }
+
+            pickBonusData = new PickBonusResultData
+            {
+                triggered = serverPickBonus.triggered,
+                active = serverPickBonus.active,
+                picksRemaining = serverPickBonus.picksRemaining,
+                revealed = revealedList,
+                counts = serverPickBonus.counts ?? new Dictionary<string, int>(),
+                pickWinCash = serverPickBonus.pickWinCash,
+                totalBonusWin = serverPickBonus.totalBonusWin,
+                isOver = serverPickBonus.isOver
+            };
+        }
+
+        bool isPickBonusCompletionWithoutMatrix = pickBonusData != null && pickBonusData.isOver && (sourceMatrix == null || sourceMatrix.Count == 0);
+
         SpinResult result = new SpinResult
         {
-            resultMatrix = ConvertReelsToMatrix(
-                null,
-                sourceMatrix,
-                gameConfig),
+            resultMatrix = isPickBonusCompletionWithoutMatrix
+                ? null
+                : ConvertReelsToMatrix(
+                    null,
+                    sourceMatrix,
+                    gameConfig),
 
             winAmount = winAmount,
             grandTotalWin = serverResponse.payload.grandTotalWin,
@@ -717,6 +821,7 @@ public static class InitDataConverter
             wildCoinMysteryData = mysteryData,
             uSpinData = null,
             moneyBagData = null,
+            pickBonusData = pickBonusData,
         };
 
         return result;

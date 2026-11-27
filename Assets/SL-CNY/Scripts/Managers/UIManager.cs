@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour
     [Header("Loading & Intro")]
     [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject gameLogoObject;
+    [SerializeField] private GameObject featureLabelContainer;
+    [SerializeField] private TMP_Text featureLabelText;
 
 
 
@@ -61,6 +63,15 @@ public class UIManager : MonoBehaviour
     [Header("Money Bag Bonus")]
     [SerializeField] private MoneyBagController moneyBagController;
 
+    [Header("Pick Bonus")]
+    [SerializeField] private PickBonusController pickBonusController;
+    [SerializeField] private GameObject baseSlotObject;
+    [SerializeField] private Image landscapeBackgroundImage;
+    [SerializeField] private Sprite baseBackgroundSprite;
+    [SerializeField] private Sprite pickBonusPhase2BackgroundSprite;
+    [SerializeField] private float pickBonusFadeDuration = 0.35f;
+    [SerializeField] private float pickBonusBlackHoldDuration = 0.25f;
+
     [Header("Universal Win Popup")]
     [SerializeField] private GameObject universalWinPopup;
     [SerializeField] private RectTransform universalWinPopupRect;
@@ -68,6 +79,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject uwpYouWonSubtitle;
     [SerializeField] private GameObject uwpBigWinTitle;
     [SerializeField] private TMP_Text uwpWinAmountText;
+    [SerializeField] private TMP_Text uwpPickBonusMessageText;
     [SerializeField] private TMP_Text uwpFreeSpinCountText;
     [SerializeField] private GameObject uwpFreeSpinObject;
     [SerializeField] private Button uwpTakeButton;
@@ -1142,7 +1154,7 @@ public class UIManager : MonoBehaviour
         initialFreeSpins = spinsAwarded;
         totalFreeSpinsAwarded = spinsAwarded;
         
-        if (gameLogoObject) gameLogoObject.SetActive(false);
+        SetFeatureBanner(true, "FREE SPIN");
 
         UpdateFreeSpinCount(0, spinsAwarded);
         UpdateWinDisplay(0);
@@ -1173,7 +1185,7 @@ public class UIManager : MonoBehaviour
 
         // 2. Setup main slot UI state behind back film
         if (freeSpinCountContainer) freeSpinCountContainer.SetActive(false);
-        if (gameLogoObject) gameLogoObject.SetActive(true);
+        SetFeatureBanner(false);
 
         // Reset win display for base game after free spins end
         UpdateWinDisplay(0);
@@ -1738,6 +1750,180 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
+    #region Pick Bonus
+
+    internal void TriggerPickBonus(PickBonusResultData triggerData, System.Action onComplete)
+    {
+        StartCoroutine(PickBonusSequence(triggerData, onComplete));
+    }
+
+    private IEnumerator PickBonusSequence(PickBonusResultData triggerData, System.Action onComplete)
+    {
+        SetButtonActive(autoSpinStopButton, autoSpinStopButtonPortrait, false);
+        SetButtonActive(stopButton, stopButtonPortrait, false);
+        SetButtonActive(spinButton, spinButtonPortrait, true);
+        SetButtonInteractable(spinButton, spinButtonPortrait, false);
+
+        // TODO: Re-enable once "You won Pick Bonus!" trigger popup UI is finalized
+        // bool triggerTakePressed = false;
+        // ShowPickBonusTriggerPopup(() => triggerTakePressed = true);
+        // yield return new WaitUntil(() => triggerTakePressed);
+
+        AudioManager.Instance?.Stop3UspinWinLineLoop();
+
+        if (pickBonusController == null)
+        {
+            Debug.LogError("PickBonusController is not assigned in UIManager!");
+            onComplete?.Invoke();
+            yield break;
+        }
+
+        if (baseSlotObject != null) baseSlotObject.SetActive(false);
+        SetFeatureBanner(true, "MAGIC TREE");
+
+        bool phase1Done = false;
+        pickBonusController.StartPhase1(
+            triggerData != null ? triggerData.picksRemaining : 0,
+            () => gameManager?.RequestPickBonusCompletionSpin(),
+            () => phase1Done = true);
+
+        yield return new WaitUntil(() => phase1Done && gameManager != null && gameManager.pendingPickBonusCompletion != null);
+
+        PickBonusResultData completionData = gameManager.pendingPickBonusCompletion;
+
+        if (transitionBackFilm != null)
+        {
+            transitionBackFilm.gameObject.SetActive(true);
+            transitionBackFilm.alpha = 0f;
+            yield return transitionBackFilm.DOFade(1f, pickBonusFadeDuration).WaitForCompletion();
+            yield return new WaitForSeconds(pickBonusBlackHoldDuration);
+        }
+
+        if (landscapeBackgroundImage != null && pickBonusPhase2BackgroundSprite != null)
+        {
+            landscapeBackgroundImage.sprite = pickBonusPhase2BackgroundSprite;
+        }
+
+        bool phase2Done = false;
+        pickBonusController.StartPhase2(completionData, () => phase2Done = true);
+
+        if (transitionBackFilm != null)
+        {
+            yield return transitionBackFilm.DOFade(0f, pickBonusFadeDuration).WaitForCompletion();
+            transitionBackFilm.gameObject.SetActive(false);
+        }
+
+        yield return new WaitUntil(() => phase2Done);
+
+        double bonusWin = completionData.pickWinCash > 0 ? completionData.pickWinCash : completionData.totalBonusWin;
+        bool finalTakePressed = false;
+        ShowUniversalWinPopup(WinPopupType.MoneyBagCollect, bonusWin, 0, () => finalTakePressed = true);
+        yield return new WaitUntil(() => finalTakePressed);
+
+        if (gameManager != null && gameManager.lastResult != null && gameManager.lastResult.playerData != null)
+        {
+            double prevBalance = gameManager.playerData != null ? gameManager.playerData.balance : 0;
+            gameManager.playerData = gameManager.lastResult.playerData;
+            double targetWin = gameManager.lastResult.grandTotalWin > 0 ? gameManager.lastResult.grandTotalWin : bonusWin;
+            AnimateWinUpdate(targetWin);
+            AnimateBalanceUpdate(gameManager.playerData.balance, prevBalance);
+        }
+
+        if (transitionBackFilm != null)
+        {
+            transitionBackFilm.gameObject.SetActive(true);
+            transitionBackFilm.alpha = 0f;
+            yield return transitionBackFilm.DOFade(1f, pickBonusFadeDuration).WaitForCompletion();
+            yield return new WaitForSeconds(pickBonusBlackHoldDuration);
+        }
+
+        pickBonusController.gameObject.SetActive(false);
+        if (landscapeBackgroundImage != null && baseBackgroundSprite != null)
+        {
+            landscapeBackgroundImage.sprite = baseBackgroundSprite;
+        }
+        SetFeatureBanner(false);
+        if (baseSlotObject != null) baseSlotObject.SetActive(true);
+
+        if (transitionBackFilm != null)
+        {
+            yield return transitionBackFilm.DOFade(0f, pickBonusFadeDuration).WaitForCompletion();
+            transitionBackFilm.gameObject.SetActive(false);
+        }
+
+        if (gameManager != null && gameManager.isInFreeSpins)
+        {
+            SetSpinStopButtonStates(isSpinningState: true, isInteractable: false);
+        }
+        else if (gameManager != null && gameManager.isAutoPlaying)
+        {
+            OnAutoPlayStarted();
+        }
+        else
+        {
+            SetSpinStopButtonStates(isSpinningState: false, isInteractable: true);
+        }
+
+        onComplete?.Invoke();
+    }
+
+    private void SetFeatureBanner(bool active, string labelText = "")
+    {
+        if (gameLogoObject != null) gameLogoObject.SetActive(!active);
+        if (featureLabelContainer != null) featureLabelContainer.SetActive(active);
+        if (active && featureLabelText != null) featureLabelText.text = labelText;
+    }
+
+    /*
+    private void ShowPickBonusTriggerPopup(System.Action onTakePressed)
+    {
+        if (universalWinPopup == null)
+        {
+            onTakePressed?.Invoke();
+            return;
+        }
+
+        AudioManager.Instance?.PlayWinObjectBg();
+        isSpecialWinActive = true;
+        universalWinPopupCallback = onTakePressed;
+
+        if (uwpWinTween != null)
+        {
+            uwpWinTween.Kill();
+            uwpWinTween = null;
+        }
+
+        if (uwpCongratulationsTitle) uwpCongratulationsTitle.SetActive(true);
+        if (uwpYouWonSubtitle) uwpYouWonSubtitle.SetActive(false);
+        if (uwpBigWinTitle) uwpBigWinTitle.SetActive(false);
+        if (uwpWinAmountText) uwpWinAmountText.gameObject.SetActive(false);
+        if (uwpFreeSpinCountText) uwpFreeSpinCountText.gameObject.SetActive(false);
+        if (uwpFreeSpinObject) uwpFreeSpinObject.SetActive(false);
+        if (uwpPickBonusMessageText)
+        {
+            uwpPickBonusMessageText.text = "You won Pick Bonus!";
+            uwpPickBonusMessageText.gameObject.SetActive(true);
+        }
+
+        SetSpinStopButtonStates(isSpinningState: false, isInteractable: false);
+        SetButtonActive(uwpTakeButton, uwpTakeButtonPortrait, true);
+        SetButtonInteractable(uwpTakeButton, uwpTakeButtonPortrait, true);
+
+        universalWinPopup.SetActive(true);
+        if (universalWinPopupRect)
+        {
+            universalWinPopupRect.localScale = Vector3.zero;
+            Sequence openSeq = DOTween.Sequence();
+            openSeq.Append(universalWinPopupRect.DOScale(1.2f, 0.5f).SetEase(Ease.OutCubic));
+            openSeq.Append(universalWinPopupRect.DOScale(1f, 0.3f).SetEase(Ease.InOutSine));
+        }
+
+        if (starFountain != null) starFountain.PlayStarBurst();
+    }
+    */
+
+    #endregion
+
     #region Universal Win Popup
 
     internal void ShowUniversalWinPopup(WinPopupType type, double winAmount, int freeSpinCount = 0, System.Action onTakePressed = null)
@@ -1758,6 +1944,7 @@ public class UIManager : MonoBehaviour
         if (uwpYouWonSubtitle) uwpYouWonSubtitle.SetActive(false);
         if (uwpBigWinTitle) uwpBigWinTitle.SetActive(false);
         if (uwpWinAmountText) uwpWinAmountText.gameObject.SetActive(false);
+        if (uwpPickBonusMessageText) uwpPickBonusMessageText.gameObject.SetActive(false);
         if (uwpFreeSpinCountText) uwpFreeSpinCountText.gameObject.SetActive(false);
         if (uwpFreeSpinObject) uwpFreeSpinObject.SetActive(false);
 

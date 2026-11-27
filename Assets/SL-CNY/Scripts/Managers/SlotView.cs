@@ -30,11 +30,6 @@ public class SlotView : MonoBehaviour
     [SerializeField] private Sprite spriteGoldStrawberry;  // ID: 12
     [SerializeField] private Sprite spriteGoldBerries;     // ID: 14
 
-    [Header("Unknown symbols")]
-    [SerializeField] private Sprite spriteYinYang;         // ID: 15
-    [SerializeField] private Sprite spriteWildYingYang;    // ID: 16
-    [SerializeField] private Sprite spriteWildStrawberry;  // ID: 17
-
 
     // Internal array built from named sprites
     private Sprite[] symbolSprites;
@@ -495,8 +490,8 @@ public class SlotView : MonoBehaviour
 
     private void BuildSymbolSpriteArray()
     {
-        // Build the symbol sprite array from named sprite fields
-        symbolSprites = new Sprite[18];
+        // Build the symbol sprite array from named sprite fields (IDs 0-14)
+        symbolSprites = new Sprite[15];
 
         symbolSprites[0] = spriteTiger;
         symbolSprites[1] = spriteGoldCoin;
@@ -514,13 +509,6 @@ public class SlotView : MonoBehaviour
         symbolSprites[13] = spriteBlueberry;
         symbolSprites[14] = spriteGoldBerries;
 
-        // These backend IDs reuse existing artwork.
-        // There are no separate Wild Yin Yang / Wild Strawberry sprites.
-        symbolSprites[15] = spriteBlueberry;
-        symbolSprites[16] = spriteBlueberry;
-        symbolSprites[17] = spriteRedStrawberry;
-
-
         // Validate
         for (int i = 0; i < symbolSprites.Length; i++)
         {
@@ -531,7 +519,7 @@ public class SlotView : MonoBehaviour
         }
 
         // Build the animation sprite arrays
-        animationSpriteArrays = new List<Sprite>[18];
+        animationSpriteArrays = new List<Sprite>[15];
         // Only USpin has an animation in this game - SFR has different animations.
         //animationSpriteArrays[11] = animSpritesUSpin;
     }
@@ -539,7 +527,6 @@ public class SlotView : MonoBehaviour
     private void InitializeReels()
     {
         cycleDistance = symbolHeight;
-        restingAnchoredY = 111.8f;
         if (reelTransforms != null && reelTransforms.Length > 0)
         {
             reelRectTransforms = new RectTransform[reelTransforms.Length];
@@ -550,23 +537,6 @@ public class SlotView : MonoBehaviour
                     reelRectTransforms[i] = reelTransforms[i] as RectTransform;
                 }
             }
-            if (reelRectTransforms[0] != null)
-            {
-                float sceneY = reelRectTransforms[0].anchoredPosition.y;
-                if (Mathf.Abs(sceneY) > 0.001f)
-                {
-                    restingAnchoredY = sceneY;
-                }
-            }
-        }
-
-        // Auto-guard: for a 12-image strip with Middle-Center layout, visible items are indices 5, 6, 7
-        visibleStartIndex = 5;
-
-        // Enforce safe spinLoopDistance so the 12-image strip never leaves empty gaps
-        if (spinLoopDistance > 750f || spinLoopDistance < 100f)
-        {
-            spinLoopDistance = 685f;
         }
 
         // Ensure all reel strip images are active from Awake
@@ -627,8 +597,8 @@ public class SlotView : MonoBehaviour
     // Base symbols allowed on the spinning strip and initial view:
     // 0: Tiger, 2: Owl, 3: Cat, 4: Frog, 5: Deer, 6: Fox
     // 7: RedGem, 8: OrangeGem, 9: PinkGem, 10: GreenGem
-    // 11: RedStrawberry (Scatter), 13: Blueberry (Special), 15: YinYang (Scatter)
-    private readonly List<int> baseSymbolIds = new List<int> { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15 };
+    // 11: RedStrawberry (scatterPick), 13: BlueBerries (scatterFree)
+    private readonly List<int> baseSymbolIds = new List<int> { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13 };
 
     public int VisibleStartIndex => visibleStartIndex;
 
@@ -680,11 +650,6 @@ public class SlotView : MonoBehaviour
             if (imageIndex < reel.images.Count && reel.images[imageIndex] != null)
             {
                 int symbolId = visibleSymbolIds[row];
-                if (!baseSymbolIds.Contains(symbolId))
-                {
-                    Debug.LogWarning($"[SlotView] Non-base symbol ID {symbolId} received for reel stop. Mapping to base symbol.");
-                    symbolId = GetRandomBaseSymbolId();
-                }
                 reel.images[imageIndex].gameObject.SetActive(true);
                 reel.images[imageIndex].enabled = true;
                 Color c = reel.images[imageIndex].color;
@@ -1246,6 +1211,27 @@ public class SlotView : MonoBehaviour
         }
     }
 
+    internal void AnimatePickBonusWin()
+    {
+        if (currentDisplayMatrix == null) return;
+
+        KillWinTweens();
+        AudioManager.Instance?.PlayWinLinePhase1Start();
+
+        const int redStrawberrySymbolId = 11;
+        for (int col = 0; col < 5; col++)
+        {
+            if (col >= currentDisplayMatrix.Count) continue;
+            for (int row = 0; row < currentDisplayMatrix[col].Count; row++)
+            {
+                if (currentDisplayMatrix[col][row] == redStrawberrySymbolId)
+                {
+                    EnableWinBox(col, row);
+                }
+            }
+        }
+    }
+
     private void AnimateSymbolSingleLoop(int column, int row, int loopCount = 1)
     {
         Image symbolImage = GetVisibleImage(column, row);
@@ -1328,23 +1314,52 @@ public class SlotView : MonoBehaviour
         winAnimationCoroutine = StartCoroutine(PlayWinPresentation(winLines ?? new List<WinLine>(), onComplete));
     }
 
+    private HashSet<int> CollectPaylinePositions(WinLine winLine)
+    {
+        var positions = new HashSet<int>();
+        if (winLine == null) return positions;
+
+        if (winLine.positions != null && winLine.positions.Count > 0)
+        {
+            foreach (int flatIndex in winLine.positions)
+            {
+                positions.Add(flatIndex);
+            }
+            return positions;
+        }
+
+        if (gameManager?.gameConfig?.paylines != null && winLine.lineId >= 0 && winLine.lineId < gameManager.gameConfig.paylines.Count)
+        {
+            var lineCoords = gameManager.gameConfig.paylines[winLine.lineId];
+            int count = winLine.symbolIds != null && winLine.symbolIds.Count > 0 ? winLine.symbolIds.Count : (lineCoords != null ? lineCoords.Count : 3);
+            for (int c = 0; c < count && c < 5 && c < lineCoords.Count; c++)
+            {
+                int r = lineCoords[c];
+                positions.Add(r * 5 + c);
+            }
+        }
+
+        return positions;
+    }
+
     private IEnumerator PlayWinPresentation(List<WinLine> winLines, System.Action onComplete)
     {
-        // 1. Collect all winning positions across all win lines simultaneously
-        HashSet<int> allWinPositions = new HashSet<int>();
+        // 1. Collect per-payline position sets and union all winning positions for Phase 1
+        var paylinePositionSets = new List<HashSet<int>>();
+        var allWinPositions = new HashSet<int>();
         double totalWinAmount = 0;
+
         if (winLines != null)
         {
             foreach (var winLine in winLines)
             {
-                if (winLine.positions != null)
-                {
-                    foreach (int flatIndex in winLine.positions)
-                    {
-                        allWinPositions.Add(flatIndex);
-                    }
-                }
                 totalWinAmount += winLine.winAmount;
+                HashSet<int> linePositions = CollectPaylinePositions(winLine);
+                if (linePositions.Count > 0)
+                {
+                    paylinePositionSets.Add(linePositions);
+                    allWinPositions.UnionWith(linePositions);
+                }
             }
         }
 
@@ -1353,25 +1368,7 @@ public class SlotView : MonoBehaviour
             totalWinAmount = gameManager.lastResult.winAmount;
         }
 
-        // Safety net: If positions were not sent in winLines, reconstruct from paylines definition
-        if (allWinPositions.Count == 0 && winLines != null)
-        {
-            foreach (var winLine in winLines)
-            {
-                if (gameManager?.gameConfig?.paylines != null && winLine.lineId >= 0 && winLine.lineId < gameManager.gameConfig.paylines.Count)
-                {
-                    var lineCoords = gameManager.gameConfig.paylines[winLine.lineId];
-                    int count = winLine.symbolIds != null && winLine.symbolIds.Count > 0 ? winLine.symbolIds.Count : (lineCoords != null ? lineCoords.Count : 3);
-                    for (int c = 0; c < count && c < 5 && c < lineCoords.Count; c++)
-                    {
-                        int r = lineCoords[c];
-                        allWinPositions.Add(r * 5 + c);
-                    }
-                }
-            }
-        }
-
-        // Additional safety net: If allWinPositions is still empty but totalWinAmount > 0, find matching line symbols
+        // Fallback: if no payline positions were resolved but totalWinAmount > 0, find matching line symbols
         if (allWinPositions.Count == 0 && totalWinAmount > 0 && currentDisplayMatrix != null)
         {
             int rowCount = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
@@ -1391,20 +1388,25 @@ public class SlotView : MonoBehaviour
                     }
                     if (matchLen >= 3)
                     {
-                        for (int c = 0; c < matchLen; c++) allWinPositions.Add(r * 5 + c);
+                        var fallbackLine = new HashSet<int>();
+                        for (int c = 0; c < matchLen; c++) fallbackLine.Add(r * 5 + c);
+                        paylinePositionSets.Add(fallbackLine);
+                        allWinPositions.UnionWith(fallbackLine);
                     }
                 }
             }
             if (allWinPositions.Count == 0)
             {
-                for (int c = 0; c < 3; c++) allWinPositions.Add(1 * 5 + c);
+                var defaultLine = new HashSet<int>();
+                for (int c = 0; c < 3; c++) defaultLine.Add(1 * 5 + c);
+                paylinePositionSets.Add(defaultLine);
+                allWinPositions.UnionWith(defaultLine);
             }
         }
 
-        Debug.Log($"[PlayWinPresentation] Highlighting all {allWinPositions.Count} winning icons across {winLines?.Count ?? 0} win lines simultaneously");
+        Debug.Log($"[PlayWinPresentation] Phase 1: Highlighting {allWinPositions.Count} winning icons across {paylinePositionSets.Count} paylines");
 
-        // 2. Show Total Win Text and play win sound
-        // 1. Play Star boom animation right as win activates (exploding all over screen)
+        // Phase 1: Star boom, Total Win text, and all winning symbols highlighted simultaneously
         PlayStarAnimation();
 
         if (starToWinTextDelay > 0)
@@ -1412,19 +1414,28 @@ public class SlotView : MonoBehaviour
             yield return new WaitForSeconds(starToWinTextDelay);
         }
 
-        // 2. Show Total Win Text and play win sound (pops out from the star boom)
         ShowPhase1TotalWin(totalWinAmount);
         AudioManager.Instance?.PlayWinLinePhase1Start();
-
-        // 3. Highlight all winning symbols at once and dim non-winning symbols (no scale animation)
         HighlightWinningPositions(allWinPositions);
 
-        yield return new WaitForSeconds(winSymbolLoopDuration);
+        yield return new WaitForSeconds(winAnimationDuration);
 
-        // 4. Notify GameManager that win presentation is displayed so popups/autoplay/free spins can proceed
+        // Notify GameManager after Phase 1 so autoplay/free spins/popups/controls proceed normally
         onComplete?.Invoke();
 
-        // All winning symbols stay highlighted together while at rest; no cycling individual paylines!
+        // Phase 2: Cycle through individual winning paylines indefinitely until next spin
+        if (paylinePositionSets.Count > 1)
+        {
+            HidePhase1TotalWinText();
+            while (true)
+            {
+                for (int i = 0; i < paylinePositionSets.Count; i++)
+                {
+                    HighlightWinningPositions(paylinePositionSets[i]);
+                    yield return new WaitForSeconds(winSymbolLoopDuration);
+                }
+            }
+        }
     }
 
     private void HighlightWinningPositions(HashSet<int> winPositions)

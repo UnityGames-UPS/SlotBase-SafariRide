@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour
     internal int freeSpinsUsed;
     internal bool waitingForFreeSpinStart;
 
+    internal bool isInPickBonus;
+    internal PickBonusResultData pendingPickBonusCompletion;
+
     internal bool isInitialized;
     internal bool initializationFailed;
 
@@ -56,6 +59,8 @@ public class GameManager : MonoBehaviour
         currentState = GameState.Initializing;
         currentSpinSpeed = SpinSpeed.Normal;
         waitingForFreeSpinStart = false;
+        isInPickBonus = false;
+        pendingPickBonusCompletion = null;
         isInitialized = false;
         initializationFailed = false;
     }
@@ -154,7 +159,7 @@ public class GameManager : MonoBehaviour
     
     internal void RequestSpin()
     {
-        if (waitingForFreeSpinStart) return;
+        if (waitingForFreeSpinStart || isInPickBonus) return;
 
         if (currentState != GameState.Idle) return;
         if (!socketManager.isConnected) return;
@@ -412,6 +417,12 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
+        if (lastResult != null && lastResult.pickBonusData != null && lastResult.pickBonusData.triggered && lastResult.pickBonusData.active && !lastResult.pickBonusData.isOver)
+        {
+            yield return StartCoroutine(DelayPickBonusTriggerResult());
+            yield break;
+        }
+
         if (lastResult != null && lastResult.freeSpinData != null && lastResult.freeSpinData.isTriggered && !isInFreeSpins)
         {
             yield return StartCoroutine(DelayScatterTriggerResult());
@@ -492,6 +503,45 @@ public class GameManager : MonoBehaviour
         });
     }
 
+    internal void RequestPickBonusCompletionSpin()
+    {
+        if (!isInPickBonus || socketManager == null || !socketManager.isConnected) return;
+
+        pendingPickBonusCompletion = null;
+        socketManager.SendSpinRequest(currentBetIndex, isInFreeSpins);
+    }
+
+    private IEnumerator DelayPickBonusTriggerResult()
+    {
+        isInPickBonus = true;
+        currentState = GameState.PickBonusMode;
+        pendingPickBonusCompletion = null;
+
+        AudioManager.Instance?.Play3UspinWinLineLoop();
+
+        if (slotView != null)
+        {
+            slotView.AnimatePickBonusWin();
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        uiManager.TriggerPickBonus(lastResult.pickBonusData, CompletePickBonus);
+    }
+
+    internal void CompletePickBonus()
+    {
+        if (!isInPickBonus) return;
+
+        isInPickBonus = false;
+        pendingPickBonusCompletion = null;
+        if (lastResult != null && lastResult.pickBonusData != null)
+        {
+            lastResult.pickBonusData.triggered = false;
+        }
+        ResumeAfterSpecialFeature();
+    }
+
     private IEnumerator DelayBeforeNextRound()
     {
         float delayTime = currentSpinSpeed == SpinSpeed.QuickSpin ? 0.3f : 0.5f;
@@ -519,6 +569,13 @@ public class GameManager : MonoBehaviour
 
     internal void OnSpinResultReceived(SpinResult result)
     {
+        if (isInPickBonus && result != null && result.pickBonusData != null && result.pickBonusData.isOver)
+        {
+            pendingPickBonusCompletion = result.pickBonusData;
+            lastResult = result;
+            return;
+        }
+
         lastResult = result;
 
         // CRITICAL FIX: Update free spin counter IMMEDIATELY when server response arrives

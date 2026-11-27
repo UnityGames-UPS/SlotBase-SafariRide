@@ -358,9 +358,9 @@ public class SocketIOManager : MonoBehaviour
     {
       var serverResponse = JsonConvert.DeserializeObject<ServerSpinResponse>(jsonData);
 
-      if (!serverResponse.success)
+      if (serverResponse == null || !serverResponse.success || serverResponse.payload == null)
       {
-        Debug.LogError("[SocketIO] Spin failed");
+        Debug.LogError("[SocketIO] Spin failed or payload missing");
         return;
       }
 
@@ -687,7 +687,7 @@ public class SocketIOManager : MonoBehaviour
   }
 
   #endregion
-  private static readonly int[] BaseSymbolPool = { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15 };
+  private static readonly int[] BaseSymbolPool = { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13 };
   private List<List<int>> GenerateRandomMatrix(int rowCount)
   {
     var matrix = new List<List<int>>();
